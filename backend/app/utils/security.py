@@ -5,6 +5,7 @@ from jose import jwt, JWTError
 
 from ..config import settings
 
+# 使用 pbkdf2_sha256（與資料庫現有密碼格式一致）
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

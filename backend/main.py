@@ -28,15 +28,12 @@ async def lifespan(app: FastAPI):
     
     # Get the absolute path to the backend directory
     backend_dir = os.path.dirname(os.path.abspath(__file__))
+    alembic_path = os.path.join(backend_dir, ".venv", "Scripts", "alembic.exe")
     
     # Run alembic upgrade head
-    # In Docker (and properly set up venvs), 'alembic' is in the PATH.
     try:
-        logger.info("Starting database migration...")
-        subprocess.run(["alembic", "upgrade", "head"], check=True, cwd=backend_dir)
+        subprocess.run([alembic_path, "upgrade", "head"], check=True, cwd=backend_dir)
         logger.info("Database migrations complete.")
-    except FileNotFoundError:
-        logger.error("Alembic command not found. Ensure it is installed and in PATH.")
     except subprocess.CalledProcessError as e:
         logger.error(f"Database migrations failed: {e}")
         # We might want to stop startup here, but for now we log error

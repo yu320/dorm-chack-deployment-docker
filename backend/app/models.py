@@ -268,3 +268,29 @@ class AuditLog(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     user = relationship("User")
+
+
+# --- Announcement Models ---
+
+class TagType(str, enum.Enum):
+    primary = "primary"
+    success = "success"
+    warning = "warning"
+    danger = "danger"
+    info = "info"
+
+
+class Announcement(Base):
+    __tablename__ = "announcements"
+    
+    id = Column(CHAR(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    title = Column(String(200), nullable=False)
+    content = Column(Text, nullable=False)
+    tag = Column(String(50), nullable=False)
+    tag_type = Column(Enum(TagType), nullable=False, default=TagType.primary)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    created_by = Column(CHAR(36), ForeignKey("users.id"), nullable=False)
+    
+    creator = relationship("User")

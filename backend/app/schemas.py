@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr
 from typing import List, Optional
 from datetime import datetime
 
-from .models import InspectionStatus, ItemStatus, LightStatus
+from .models import InspectionStatus, ItemStatus, LightStatus, TagType
 
 # --- Permission Schemas ---
 class Permission(BaseModel):
@@ -398,6 +398,39 @@ class ResetPassword(BaseModel):
     new_password: str
     confirm_password: str
 
+
+# --- Announcement Schemas ---
+class AnnouncementBase(BaseModel):
+    title: str
+    content: str
+    tag: str
+    tag_type: str = "primary"
+
+
+class AnnouncementCreate(AnnouncementBase):
+    pass
+
+
+class AnnouncementUpdate(BaseModel):
+    title: Optional[str] = None
+    content: Optional[str] = None
+    tag: Optional[str] = None
+    tag_type: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
+class AnnouncementResponse(AnnouncementBase):
+    id: uuid.UUID
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+
+class PaginatedAnnouncements(BaseModel):
+    total: int
+    records: List[AnnouncementResponse]
+=======
 # --- Audit Log Schemas ---
 class AuditLog(BaseModel):
     id: uuid.UUID
