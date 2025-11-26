@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dorm-inspection-backend"
+version = "0.1.0"
+description = "The backend for the Student Dormitory Inspection System."
+authors = [{ name = "Auto-generated", email = "user@example.com" }]
+requires-python = ">=3.8"
+
+# By using find, setuptools will discover the 'app' package automatically.
+[tool.setuptools.packages.find]
+where = ["."]

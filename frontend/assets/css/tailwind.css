@@ -1,0 +1,759 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  src/assets/styles/main.css
+
+  這個檔案用於存放全域自定義樣式。
+  我已經將您舊專案中的 style.css 和 login.css 裡重要的自定義樣式 (如動畫、狀態標籤、RWD 表格) 整合到這裡。
+*/
+
+/* --- :root 變數定義 (保留好的實踐) --- */
+:root {
+  /* 主色系 */
+  --primary-color: #007575; /* New Teal */
+  --primary-light: #e0f2f2; /* New Teal Light */
+  --primary-dark: #006060;  /* New Teal Dark */
+
+  /* 輔助色系 */
+  --success-color: #16a34a; /* Green-600 */
+  --success-light: #dcfce7; /* Green-100 */
+  --error-color: #dc2626;   /* Red-600 */
+  --error-light: #fee2e2;   /* Red-100 */
+  --warning-color: #d97706; /* Amber-600 */
+  --warning-light: #fef3c7; /* Amber-100 */
+  --info-color: #3b82f6;    /* Blue-500 */
+  --info-light: #eff6ff;    /* Blue-50 */
+
+  /* 中性色系 */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+
+  /* 尺寸 */
+  --border-radius-sm: 0.375rem; /* rounded-md */
+  --border-radius-md: 0.5rem;   /* rounded-lg */
+  --border-radius-lg: 0.75rem;  /* rounded-xl */
+
+  /* 陰影 */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  /* 動畫 */
+  --transition-fast: all 0.15s ease-in-out;
+  --transition-normal: all 0.3s ease-in-out;
+}
+
+/* 全局盒模型設置，確保 padding 和 border 不會增加元素總尺寸 */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+    font-family: 'Inter', 'Noto Sans TC', sans-serif; /* 確保 html 元素也使用字體 */
+}
+
+body {
+  font-family: 'Inter', 'Noto Sans TC', sans-serif; /* 優先使用 Inter，中文 fallback 到 Noto Sans TC */
+  background-color: var(--gray-100);
+  color: var(--gray-900);
+  line-height: 1.6;
+}
+
+/* 容器和卡片基礎樣式 */
+.container {
+    max-width: 1200px; /* 增加最大寬度 */
+    width: 100%; /* 確保容器在小螢幕上佔滿寬度 */
+    padding-left: 1rem; /* 增加左右內邊距 */
+    padding-right: 1rem; /* 增加左右內邊距 */
+}
+
+/* 頁籤樣式優化 */
+.tab-button {
+  position: relative;
+  transition: var(--transition-normal);
+  padding: 1rem 1.5rem; /* 增加點擊區域 */
+  font-size: 1.05rem; /* 稍微放大字體 */
+  border-bottom: 3px solid transparent; /* 預設透明底線 */
+  white-space: nowrap; /* 防止文字換行 */
+}
+
+.tab-button:hover {
+  color: var(--primary-dark);
+}
+
+.tab-button.tab-active {
+  color: var(--primary-color);
+  font-weight: 600;
+  border-color: var(--primary-color); /* 激活時顯示底線 */
+}
+
+/* 按鈕樣式優化 */
+/* Tailwind 已經處理了大部分按鈕樣式，這裡保留一些通用調整 */
+button {
+    cursor: pointer;
+    outline: none;
+}
+
+/* 表單元素樣式優化 */
+input, textarea, select {
+  font-family: 'Inter', 'Noto Sans TC', sans-serif;
+  font-size: 1rem;
+  transition: var(--transition-fast);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+/* 動畫優化 */
+.check-in-animation {
+  animation: bounce-in 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; /* 更活潑的彈跳動畫 */
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 代碼顏色類別優化 - 確保對比度和視覺多樣性 */
+[class*="code-"] {
+  font-weight: 700; /* 更粗的字體 */
+  letter-spacing: 0.025em; /* 稍微增加字間距 */
+}
+
+/* 字母代碼顏色 */
+.code-a { color: #047857; } /* Emerald-700 */
+.code-b { color: #0369a1; } /* Sky-700 */
+.code-c { color: #7c3aed; } /* Violet-600 */
+.code-d { color: #b45309; } /* Amber-700 */
+.code-e { color: #be123c; } /* Rose-700 */
+.code-f { color: #4338ca; } /* Indigo-700 */
+.code-g { color: #15803d; } /* Green-700 */
+.code-h { color: #0e7490; } /* Cyan-700 */
+.code-i { color: #6d28d9; } /* Purple-700 */
+.code-j { color: #92400e; } /* Orange-700 */
+.code-k { color: #9f1239; } /* Red-800 */
+.code-l { color: #1e3a8a; } /* Blue-800 */
+.code-m { color: #166534; } /* Emerald-800 */
+.code-n { color: #155e75; } /* Teal-800 */
+.code-o { color: #5b21b6; } /* Violet-800 */
+.code-p { color: #713f12; } /* Amber-800 */
+.code-q { color: #9f1239; } /* Red-800 */
+.code-r { color: #1e40af; } /* Indigo-880 */
+.code-s { color: #14532d; } /* Green-800 */
+.code-t { color: #164e63; } /* Cyan-800 */
+.code-u { color: #4c1d95; } /* Purple-800 */
+.code-v { color: #713f12; } /* Orange-800 */
+.code-w { color: #9f1239; } /* Red-800 */
+.code-x { color: #1e3a8a; } /* Blue-800 */
+.code-y { color: #166534; } /* Emerald-800 */
+.code-z { color: #155e75; } /* Teal-200 */
+
+/* [NEW] 數字代碼顏色 */
+.code-digit-0 { color: #06b6d4; } /* Cyan-500 */
+.code-digit-1 { color: #0891b2; } /* Cyan-600 */
+.code-digit-2 { color: #0e7490; } /* Cyan-700 */
+.code-digit-3 { color: #155e75; } /* Cyan-800 */
+.code-digit-4 { color: #2563eb; } /* Blue-600 */
+.code-digit-5 { color: #1d4ed8; } /* Blue-700 */
+.code-digit-6 { color: #1e40af; } /* Blue-800 */
+.code-digit-7 { color: #1e3a8a; } /* Blue-900 */
+.code-digit-8 { color: #0d9488; } /* Teal-500 */
+.code-digit-9 { color: #0f766e; } /* Teal-600 */
+
+
+/* 自定義訊息框樣式 (Toast Notification) */
+#customMessageBox {
+    min-width: 250px;
+    padding: 1rem 1.25rem;
+    border-radius: var(--border-radius-md);
+    font-weight: 500;
+    box-shadow: var(--shadow-xl);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* [MODIFIED] 狀態標籤美化 */
+.status-badge {
+    display: inline-block;
+    text-align: center;
+    padding: 0.3rem 0.8rem;
+    border-radius: 9999px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    letter-spacing: 0.025em;
+    border: 1px solid transparent;
+}
+
+/* [MODIFIED] 類型標籤樣式 */
+.type-badge {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.3rem 0.8rem;
+    border-radius: 9999px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    border: 1px solid transparent;
+}
+
+/* [MODIFIED] 根據 data-type 屬性為類型標籤上色 */
+.type-badge[data-type="簽到"] {
+    background-color: #eef2ff; /* Indigo-50 */
+    color: #4338ca; /* Indigo-700 */
+    border-color: #c7d2fe; /* Indigo-200 */
+}
+.type-badge[data-type="簽退"] {
+    background-color: #f1f5f9; /* Slate-100 */
+    color: #475569; /* Slate-600 */
+    border-color: #e2e8f0; /* Slate-200 */
+}
+
+/* [MODIFIED] 根據 data-status 屬性為狀態標籤上色 */
+.status-badge[data-status="準時"],
+.status-badge[data-status="簽退成功"] {
+    background-color: #ecfdf5; /* Emerald-50 */
+    color: #047857; /* Emerald-700 */
+    border-color: #a7f3d0; /* Emerald-200 */
+}
+
+.status-badge[data-status="遲到"],
+.status-badge[data-status="重複簽到"],
+.status-badge[data-status="重複簽退"] {
+    background-color: #fefce8; /* Yellow-50 */
+    color: #a16207; /* Yellow-700 */
+    border-color: #fef08a; /* Yellow-200 */
+}
+
+.status-badge[data-status="早退"] {
+    background-color: #e0f2fe; /* Sky-50 */
+    color: #0369a1; /* Sky-700 */
+    border-color: #bae6fd; /* Sky-200 */
+}
+
+/* 【*** 核心修正 ***】新增未簽退的樣式 */
+.status-badge[data-status="準時&未簽退"],
+.status-badge[data-status="遲到&未簽退"] {
+    background-color: #f5f3ff; /* Purple-50 */
+    color: #7c3aed; /* Purple-600 */
+    border-color: #ddd6fe; /* Purple-200 */
+}
+
+.status-badge[data-status*="失敗"],
+.status-badge[data-status*="異常"],
+.status-badge[data-status="查無此人"],
+.status-badge[data-status="活動查無此人"],
+.status-badge[data-status="未簽到"] {
+    background-color: #fff1f2; /* Rose-50 */
+    color: #be123c; /* Rose-700 */
+    border-color: #fecdd3; /* Rose-200 */
+}
+
+.status-badge[data-status="成功"] {
+    background-color: #ecfdf5; /* Emerald-50 */
+    color: #047857; /* Emerald-700 */
+    border-color: #a7f3d0; /* Emerald-200 */
+}
+
+
+/* --- NEW: Report Page Styles (from old style.css) --- */
+.chart-container {
+    position: relative;
+    height: 300px; /* 或者使用 Tailwind h-72 等 */
+    width: 100%;
+}
+.report-content {
+    display: none;
+}
+.report-content.active {
+    display: block;
+}
+.data-grid {
+    border-collapse: collapse;
+    width: 100%;
+}
+.data-grid th, .data-grid td {
+    padding: 12px 16px;
+    text-align: left; /* Default text alignment for most cells */
+    border-bottom: 1px solid #e5e7eb;
+}
+.data-grid th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--gray-500);
+}
+
+/* [MODIFIED] 下拉選單基礎樣式 (電腦版) */
+.dropdown-menu-floating {
+    position: absolute;
+    z-index: 50;
+    top: 100%;
+    left: 0;
+    margin-top: 0.5rem;
+    min-width: 12rem;
+    background-color: white;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: 0.25rem 0;
+    border: 1px solid var(--gray-200);
+    transition: all 0.1s ease-out;
+    opacity: 0;
+    transform: scale(0.95);
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+.dropdown-active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+
+/* ==========================================================================
+   響應式設計 (Responsive Design) - 優化手機瀏覽體驗
+   ========================================================================== */
+
+/* [NEW] 平板與電腦螢幕 (寬度大於 640px) */
+@media (min-width: 641px) {
+    /* 僅在寬螢幕上為表格設定最小寬度，以觸發水平捲動 */
+    .table-responsive table.table-fixed {
+        min-width: 1024px;
+    }
+}
+
+
+/* 中等螢幕及以下 (例如平板) */
+@media (max-width: 768px) {
+  .tab-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  header h1 {
+      font-size: 1.875rem; /* 調整標題大小 */
+  }
+
+  /* 手機版導覽列可水平滑動 */
+  .sticky .container .flex.border-b {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+  }
+
+  .sticky .container .flex.border-b::-webkit-scrollbar {
+      display: none;
+  }
+
+  .sticky .container .flex.border-b > .tab-button,
+  .sticky .container .flex.border-b > .relative {
+      flex-shrink: 0;
+  }
+
+  /* 手機版下拉選單樣式 */
+  /* .dropdown-menu-floating {
+    position: fixed;
+    z-index: 9999;
+    top: auto;
+    left: 1rem;
+    right: 1rem;
+    width: auto;
+    max-width: calc(100vw - 2rem);
+    margin-top: 0;
+  } */
+
+  /* 手機版頁首佈局 */
+  header .container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+  }
+
+  header .flex.items-center.gap-4 {
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+  }
+
+  header .flex.items-center.gap-4 > button {
+      width: 100%;
+  }
+
+  main#mainContent {
+      padding-left: 1rem;
+      padding-right: 1rem;
+  }
+}
+
+/* 小型螢幕 (手機) */
+@media (max-width: 640px) {
+    /* [修復] 確保手機版表格寬度不超出螢幕，以移除橫向捲動 */
+    .table-responsive table {
+        min-width: 100%;
+        width: 100% !important;
+    }
+
+    /* 將表格轉換為卡片式列表 */
+    .table-responsive table, .table-responsive thead, .table-responsive tbody, .table-responsive th, .table-responsive td, .table-responsive tr {
+        display: block;
+    }
+
+    /* 隱藏桌面版的表頭 */
+    .table-responsive thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .table-responsive tr {
+        border: 1px solid var(--gray-200);
+        margin-bottom: 1rem;
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        background-color: white;
+    }
+
+    .table-responsive tr:last-child {
+        margin-bottom: 0;
+    }
+
+    .table-responsive td {
+        border: none;
+        border-bottom: 1px solid var(--gray-100);
+        padding: 0.875rem 1rem;
+        display: grid;
+        grid-template-columns: 35% 1fr;
+        grid-gap: 1rem;
+        align-items: center;
+        /* [修復] 新增此行以置中所有內容 */
+        text-align: center;
+    }
+
+    .table-responsive tr td:last-child {
+        border-bottom: none;
+    }
+
+    /* 創建手機版的標籤 */
+    .table-responsive td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--gray-600);
+    }
+
+    /* 確保 flex 容器內的內容也置中 */
+    .table-responsive td > .flex {
+        justify-content: center; 
+    }
+
+    /* 針對裝置ID的特殊處理 */
+    .device-id-content {
+        word-break: break-all;
+        line-height: 1.4;
+        font-size: 0.85rem;
+    }
+
+    .table-responsive td[data-label="操作"],
+    .table-responsive td[data-label="選取"] {
+        align-items: center;
+    }
+}
+
+/* 手機橫向模式優化 */
+@media (max-width: 900px) and (orientation: landscape) {
+    .table-responsive tr {
+        margin-bottom: 0.75rem;
+    }
+
+    .table-responsive td {
+        grid-template-columns: 30% 1fr;
+        padding: 0.6rem 1rem;
+    }
+
+    .table-responsive td:before {
+        text-align: right;
+        padding-right: 1rem;
+    }
+
+    .table-responsive td > *, .table-responsive td {
+        text-align: left;
+        font-size: 0.9rem;
+    }
+
+    .table-responsive td > .flex {
+        justify-content: flex-start;
+    }
+}
+
+
+/* 報表頁籤樣式 */
+.report-tab {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+    padding: 1rem 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.report-tab.active {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* --- 登入頁面樣式 --- **/
+.login-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #007575 0%, #009688 100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 50;
+}
+.login-card {
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+.form-input:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+.login-btn {
+    background: linear-gradient(to right, #4f46e5, #6366f1);
+    transition: all 0.3s ease;
+}
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+.animated-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+}
+.animated-bg-shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 15s infinite ease-in-out;
+}
+.shape-1 {
+    width: 400px; height: 400px; top: -100px; right: -100px; animation-duration: 18s;
+}
+.shape-2 {
+    width: 300px; height: 300px; bottom: -50px; left: -50px; animation-duration: 20s; animation-direction: reverse;
+}
+.shape-3 {
+    width: 200px; height: 200px; top: 50%; left: 50%; animation-duration: 22s;
+}
+@keyframes float {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(40px, -30px) rotate(180deg); }
+    100% { transform: translate(0, 0) rotate(360deg); }
+}
+.clock {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 登入頁小車動畫 */
+.car-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.road {
+    width: 80%;
+    max-width: 400px;
+    height: 100px;
+    position: relative;
+    overflow: hidden;
+    background: #e0e7eb;
+    border-radius: 10px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+}
+
+.car {
+    width: 80px;
+    height: 40px;
+    background: #ff6f61;
+    border-radius: 8px;
+    position: absolute;
+    bottom: 10px;
+    animation: drive 2.5s linear infinite;
+    box-shadow: 0 4px 0 #c62828;
+    left: -100px;
+}
+
+.wheel {
+    width: 16px;
+    height: 16px;
+    background: #333;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -8px;
+    animation: spin 0.5s linear infinite;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+}
+
+.wheel.front {
+    left: 10px;
+}
+
+.wheel.back {
+    right: 10px;
+}
+
+@keyframes drive {
+    0% { left: -100px; }
+    100% { left: calc(100% + 100px); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 登入失敗動畫 */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
+.animate-shake {
+  animation: shake 0.3s ease;
+}
+
+
+/* --- NEW: Image Background --- */
+.image-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-image: url('/login.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.image-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Dark overlay for readability */
+  z-index: 0;
+}
+
+/* --- NEW: Dark Mode Overrides --- */
+.dark {
+  .tab-button {
+    color: var(--gray-300); /* Default text color for tabs in dark mode */
+  }
+
+  .tab-button:hover {
+    color: white;
+  }
+
+  .tab-button.tab-active {
+    color: var(--primary-light); /* Use a defined, light color for the active tab */
+    border-color: var(--primary-light);
+  }
+
+    .dropdown-menu-floating {
+
+      background-color: var(--gray-800);
+
+      border-color: var(--gray-700);
+
+    }
+
+  }
+
+  
+
+  /* Page Transitions */
+
+  .page-enter-active,
+
+  .page-leave-active {
+
+    transition: opacity 0.2s ease;
+
+  }
+
+  
+
+  .page-enter-from,
+
+  .page-leave-to {
+
+    opacity: 0;
+
+  }
+
+  

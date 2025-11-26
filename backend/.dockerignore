@@ -1,0 +1,11 @@
+# Ignore virtual environment and cache files
+.venv
+__pycache__
+.pytest_cache
+*.pyc
+*.db
+.env
+alembic.ini
+test.db
+test_output.txt
+test_output_utf8.txt

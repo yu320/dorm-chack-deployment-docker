@@ -1,0 +1,34 @@
+{
+  "name": "frontend",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@nuxtjs/i18n": "^10.2.0",
+    "@types/lodash-es": "^4.17.12",
+    "@vueuse/core": "^14.0.0",
+    "chart.js": "^4.5.1",
+    "compressorjs": "^1.2.1",
+    "lodash-es": "^4.17.21",
+    "nuxt": "^4.2.1",
+    "sass": "^1.94.0",
+    "vue": "^3.5.24",
+    "vue-chartjs": "^5.3.3",
+    "vue-router": "^4.6.3",
+    "vue3-signature": "^0.4.0"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.14.0",
+    "@vite-pwa/nuxt": "^1.0.7",
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^27.2.0",
+    "vitest": "^4.0.9"
+  }
+}

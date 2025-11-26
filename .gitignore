@@ -1,0 +1,72 @@
+# Environments
+.env
+.env.*
+.venv
+/node_modules
+/.nuxt
+/.output
+
+# IDEs
+.vscode/
+.idea/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+
+# Databases
+*.db
+*.sqlite3
+
+# Node cache & logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Temporary local files
+/all.txt
+/chack.code-workspace
+/check_permissions_v2.py
+/check_permissions.py
+/compare_json.py
+/fix_db_permissions.py
+/fix_lazy_loading.py
+/fix_permissions_sqlalchemy.py
+/seed_more_data.py
+/run_tests.py
+/test.db
+/test/
+
+# Backend specific
+backend/.env
+backend/__pycache__/
+backend/alembic/__pycache__/
+
+# Frontend specific
+frontend/node_modules/
+frontend/.nuxt/
+frontend/.output/
+frontend/dist/
+
+# Uploads (Keep directory, ignore content)
+/uploads/*
+!/uploads/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Logs
+test_output.log
+backend/test_output.txt
+backend/test_output_utf8.txt
+fix_crud.patch
+frontend/app_bak/
+*.patch
+*.log

@@ -1,0 +1,74 @@
+version: '3.8'
+
+# This Docker Compose file orchestrates the backend, frontend, and a reverse proxy.
+
+services:
+  # The FastAPI backend service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      # Loads environment variables from the .env file in the backend directory.
+      # Ensure this file contains the database URL, secret key, etc.
+      - backend/.env
+    volumes:
+      # Mounts the host's 'uploads' directory into the container at /app/uploads
+      # This ensures that uploaded files are persisted even if the container is removed.
+      - ./uploads:/app/uploads
+    networks:
+      - app-network
+    # No ports are exposed to the host, as traffic is routed through Nginx.
+
+  # The Nuxt.js frontend service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+    # No ports are exposed to the host, as traffic is routed through Nginx.
+
+  # The Nginx reverse proxy service, which acts as the entry point to the application
+  nginx:
+    image: nginx:1.25-alpine
+    ports:
+      # Maps port 80 on the host to port 80 in the container.
+      # This is the main entry point for all traffic.
+      - "80:80"
+    volumes:
+      # Mounts the custom Nginx configuration file.
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      # Ensures that Nginx starts after the backend and frontend services.
+      - backend
+      - frontend
+    networks:
+      - app-network
+
+# Defines the network that allows services to communicate with each other.
+networks:
+  app-network:
+    driver: bridge
+
+# --- Production Database Note ---
+# For a full production setup, you would also add a 'db' service here.
+# For example:
+#
+# db:
+#   image: mysql:8.0
+#   environment:
+#     MYSQL_ROOT_PASSWORD: 'your_root_password'
+#     MYSQL_DATABASE: 'your_db_name'
+#     MYSQL_USER: 'your_user'
+#     MYSQL_PASSWORD: 'your_user_password'
+#   volumes:
+#     - db-data:/var/lib/mysql
+#   networks:
+#     - app-network
+#
+# You would then update the backend's .env file to point to the DB service name:
+# SQLALCHEMY_DATABASE_URL="mysql+aiomysql://your_user:your_user_password@db/your_db_name"
+#
+# volumes:
+#   db-data:
