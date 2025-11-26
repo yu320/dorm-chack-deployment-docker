@@ -112,6 +112,8 @@ const fetchInspections = async () => {
     };
 
     const response = await apiFetch(`/api/v1/inspections/search?skip=${(currentPage.value - 1) * inspectionsPerPage}&limit=${inspectionsPerPage}`) as PaginatedResponse;
+    
+    console.log('Inspections API Response:', response); // Debug log
 
     if (response && Array.isArray(response.records)) {
       inspections.value = response.records;

@@ -230,9 +230,13 @@ const submitInspection = async () => {
     signature_base64: signatureData,
   };
 
-    try {
-      await inspectionStore.createInspection(payload)
+  console.log('Submitting payload:', payload); // Debug log
 
+  try {
+    await apiFetch('/api/v1/inspections/', {
+      method: 'POST',
+      body: payload,
+    });
     showSnackbar(t('snackbar.inspectionSubmitted'), 'success');
     // Clear the draft on successful submission
     localStorage.removeItem('inspection_draft');

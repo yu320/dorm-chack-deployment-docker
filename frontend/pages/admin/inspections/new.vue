@@ -216,9 +216,13 @@ const submitInspection = async () => {
     room_id: room_id,
   };
 
-    try {
-      await inspectionStore.createInspection(payload)
+  console.log('Submitting payload:', payload); // Debug log
 
+  try {
+    await apiFetch('/api/v1/inspections/', {
+      method: 'POST',
+      body: payload,
+    });
     showSnackbar(t('snackbar.inspectionSubmitted'), 'success');
     router.push('/admin/inspections'); // Redirect to admin inspections list
   } catch (error: any) {
