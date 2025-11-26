@@ -46,29 +46,38 @@ services:
     networks:
       - app-network
 
+  # MySQL Database Service
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'app_db'
+      # Development credentials
+      MYSQL_USER: 'dev_user'
+      MYSQL_PASSWORD: 'dev_password'
+      MYSQL_ROOT_PASSWORD: 'dev_root_password'
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # phpMyAdmin Service (Obfuscated Access)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_USER: dev_user
+      PMA_PASSWORD: dev_password
+      # Important for reverse proxy with subpath
+      PMA_ABSOLUTE_URI: /sys_db_admin_x9zp2/
+    networks:
+      - app-network
+
 # Defines the network that allows services to communicate with each other.
 networks:
   app-network:
     driver: bridge
 
-# --- Production Database Note ---
-# For a full production setup, you would also add a 'db' service here.
-# For example:
-#
-# db:
-#   image: mysql:8.0
-#   environment:
-#     MYSQL_ROOT_PASSWORD: 'your_root_password'
-#     MYSQL_DATABASE: 'your_db_name'
-#     MYSQL_USER: 'your_user'
-#     MYSQL_PASSWORD: 'your_user_password'
-#   volumes:
-#     - db-data:/var/lib/mysql
-#   networks:
-#     - app-network
-#
-# You would then update the backend's .env file to point to the DB service name:
-# SQLALCHEMY_DATABASE_URL="mysql+aiomysql://your_user:your_user_password@db/your_db_name"
-#
-# volumes:
-#   db-data:
+volumes:
+  db-data:

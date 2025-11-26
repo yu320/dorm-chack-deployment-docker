@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  backend:
+    # CHANGE THIS: Replace with your actual image path
+    # Format: ghcr.io/<username>/<repo-name>/backend:latest
+    image: ghcr.io/your-username/your-repo-name/backend:latest
+    restart: always
+    env_file:
+      - backend/.env
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - app-network
+
+  frontend:
+    # CHANGE THIS: Replace with your actual image path
+    image: ghcr.io/your-username/your-repo-name/frontend:latest
+    restart: always
+    networks:
+      - app-network
+
+  nginx:
+    # CHANGE THIS: Replace with your actual image path
+    image: ghcr.io/your-username/your-repo-name/nginx:latest
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'app_db'
+      # SECURITY WARNING: You MUST change these passwords in your server environment!
+      MYSQL_USER: 'prod_user'
+      MYSQL_PASSWORD: 'CHANGE_THIS_PASSWORD_TO_SOMETHING_SECURE'
+      MYSQL_ROOT_PASSWORD: 'CHANGE_THIS_ROOT_PASSWORD_TO_SOMETHING_SECURE' 
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_USER: prod_user
+      PMA_PASSWORD: 'CHANGE_THIS_PASSWORD_TO_SOMETHING_SECURE'
+      PMA_ABSOLUTE_URI: /sys_db_admin_x9zp2/
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:
