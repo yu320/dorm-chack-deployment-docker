@@ -73,4 +73,4 @@ pandas
 openpyxl
 alembic
 slowapi
-python-magic-bin
+python-magic

@@ -1,320 +1,167 @@
-# 學生宿舍檢查系統 (Student Dormitory Inspection System)
+# 學生宿舍查核與管理系統 (Student Dormitory Inspection System)
 
-## 專案簡介
-這是一個用於管理學生宿舍檢查流程的系統。它提供了一個後端 API 服務，用於處理使用者管理、宿舍房間與床位配置、學生資料、檢查紀錄的建立與查詢，並支援將檢查報告匯出為 PDF 檔案。前端則是一個基於 Nuxt.js 的網頁應用程式，提供直觀的使用者介面。
+這是一個現代化、全功能的宿舍管理平台，旨在簡化宿舍查核、學生管理與行政作業流程。系統結合了高效的 FastAPI 後端與互動豐富的 Nuxt 3 前端，並採用 Docker 容器化技術實現快速部署。
 
-## 主要功能
-*   **使用者管理**: 建立、查詢、更新使用者帳號。
-*   **身份驗證與授權**:
-    *   使用者登入 (JWT Token)。
-    *   使用者登出 (Token 黑名單機制)。
-    *   使用者註冊 (需綁定預先存在的學生資料)。
-    *   基於角色的權限控制 (RBAC)。
-    *   個人資料查詢。
-*   **宿舍結構管理**:
-    *   棟別 (Building) 管理。
-    *   寢室 (Room) 管理，包含戶別、寢室號碼、房型等。
-    *   床位 (Bed) 管理，包含床位號碼、床型、可用狀態等。
-*   **學生資料管理**: 建立、查詢、更新學生詳細資料。
-*   **檢查項目管理**: 定義宿舍檢查的各項物品。
-*   **檢查紀錄**:
-    *   建立新的宿舍檢查紀錄。
-    *   查詢檢查紀錄 (可依權限查看所有或僅自己的紀錄)。
-    *   更新檢查紀錄狀態。
-*   **PDF 報表匯出**: 將檢查紀錄匯出為格式化的 PDF 檔案，包含簽名圖片。
+## 🌟 核心功能 (Core Features)
 
-## 技術棧
+### 1. 查核管理 (Inspection Management)
+*   **數位化評分**: 捨棄紙本，管理員可透過平板或手機直接進行宿舍評分。
+*   **照片上傳**: 支援即時拍照或上傳照片作為查核佐證。
+*   **自動扣分計算**: 根據預設規則自動計算扣分，減少人為計算錯誤。
+*   **歷史紀錄**: 完整保存每次查核的詳細紀錄，方便隨時調閱。
 
-### 後端 (Backend)
-*   **框架**: FastAPI (Python)
-*   **ORM**: SQLAlchemy
-*   **資料庫**: MySQL
-*   **身份驗證**: JWT (JSON Web Tokens)
-*   **密碼雜湊**: Passlib (bcrypt)
-*   **資料驗證**: Pydantic
-*   **PDF 產生**: ReportLab
-*   **ASGI 伺服器**: Uvicorn
+### 2. 學生與住宿生管理 (Student & Resident Management)
+*   **批次匯入**: 支援 Excel/CSV 格式批次匯入學生資料。
+*   **房號分配**: 視覺化管理床位與房號分配。
+*   **學號綁定**: 自動關聯學號與 Email，方便通知發送。
 
-### 前端 (Frontend)
-*   **框架**: Nuxt.js (Vue.js)
-*   **UI 框架**: Vuetify
-*   **套件管理**: npm
+### 3. 報表與通知 (Reports & Notifications)
+*   **PDF 報告生成**: 一鍵生成精美的查核結果 PDF 報告，包含照片與評語。
+*   **Email 通知**: 查核完成後自動發送 Email 通知學生與相關人員。
 
-## 設定與安裝
+### 4. 系統管理 (System Administration)
+*   **權限控管**: 區分超級管理員、一般管理員與檢視者權限。
+*   **資料備份**: 支援資料庫與上傳檔案的備份與還原。
+*   **操作軌跡 (Audit Log)**: 記錄所有關鍵操作，提升系統安全性。
 
-### 前置條件
-在啟動專案之前，請確保您的系統已安裝以下軟體：
-*   **Python 3.8+**
-*   **MySQL 資料庫**
-*   **Node.js & npm**
+---
 
-### 後端設定
+## 🛠️ 技術棧 (Tech Stack)
 
-1.  **進入後端目錄**:
+### Backend (後端)
+*   **Framework**: [FastAPI](https://fastapi.tiangolo.com/) (Python 3.11+) - 高效能、易於開發的非同步 Web 框架。
+*   **Database**: MySQL 8.0 (生產環境) / SQLite (本地開發測試)。
+*   **ORM**: SQLAlchemy (Async) - 現代化的資料庫操作工具。
+*   **Migration**: Alembic - 資料庫版本控制。
+*   **Tools**: Pydantic (資料驗證), Jose (JWT 認證), ReportLab (PDF 生成)。
+
+### Frontend (前端)
+*   **Framework**: [Nuxt 3](https://nuxt.com/) (Vue 3) - 強大的全端 Vue 框架。
+*   **UI Library**: Tailwind CSS - 原子化 CSS 框架，打造現代化介面。
+*   **State Management**: Pinia - 輕量級狀態管理庫。
+*   **Charts**: Chart.js / Vue-Chartjs - 數據視覺化圖表。
+*   **PWA**: 支援漸進式網頁應用 (Progressive Web App)，可安裝於行動裝置。
+
+### DevOps & Deployment
+*   **Containerization**: Docker & Docker Compose。
+*   **Web Server**: Nginx (反向代理)。
+*   **CI/CD**: GitHub Actions (自動建置 Docker Image 並推送到 GHCR)。
+*   **Management**: phpMyAdmin (資料庫管理介面)。
+
+---
+
+## 🚀 快速開始 (Quick Start)
+
+### 1. 本地開發 (Local Development)
+
+這種模式適合開發者進行程式碼修改與除錯。
+
+#### 前置需求
+*   Python 3.11+
+*   Node.js 18+
+*   Docker (選用，用於跑 MySQL)
+
+#### 步驟
+1.  **啟動資料庫 (MySQL)**:
+    ```bash
+    docker compose up -d db phpmyadmin
+    ```
+    *這會啟動一個本地的 MySQL 服務 (Port 3306) 和 phpMyAdmin (Port 8080)。*
+
+2.  **設定後端**:
     ```bash
     cd backend
-    ```
-
-2.  **建立並啟用 Python 虛擬環境**:
-    ```bash
     python -m venv .venv
     # Windows
-    .\.venv\Scripts\activate
-    # macOS/Linux
-    source ./.venv/bin/activate
-    ```
-
-3.  **安裝 Python 依賴套件**:
-    ```bash
+    .venv\Scripts\activate
+    # Linux/Mac
+    source .venv/bin/activate
+    
     pip install -r requirements.txt
-    ```
-
-4.  **資料庫配置**:
-    本專案使用 `.env` 檔案來管理敏感配置，例如資料庫連線字串和 JWT 密鑰。請在 `backend` 目錄下創建一個 `.env` 檔案。
-
-    *   **建立 `.env` 檔案**:
-        在 `backend` 資料夾中創建一個名為 `.env` 的檔案，並填入以下內容（根據您的選擇）。請務必將 `your_super_secret_key` 替換為一個強而安全的密鑰。
-
-        **使用 SQLite (推薦用於開發)**:
-        SQLite 是一個輕量級的檔案型資料庫，不需要額外的伺服器。
-        ```
-        SQLALCHEMY_DATABASE_URL="sqlite+aiosqlite:///./sql_app.db"
-        SECRET_KEY="your_super_secret_key"
-        ALGORITHM="HS256"
-        ACCESS_TOKEN_EXPIRE_MINUTES=30
-        ```
-        這將在 `backend` 目錄下創建一個 `sql_app.db` 檔案。
-
-        **使用 MySQL**:
-        如果您選擇使用 MySQL，請確保您已安裝 MySQL 伺服器並創建了一個資料庫。
-        ```
-        SQLALCHEMY_DATABASE_URL="mysql+aiomysql://user:password@host:port/dbname"
-        SECRET_KEY="your_super_secret_key"
-        ALGORITHM="HS256"
-        ACCESS_TOKEN_EXPIRE_MINUTES=30
-        ```
-        請將 `user`, `password`, `host`, `port`, `dbname` 替換為您的 MySQL 資料庫設定。
-
-    *   **資料庫初始化**:
-        首次啟動後端服務時，程式會自動根據 `SQLALCHEMY_DATABASE_URL` 建立所有必要的資料表，並載入初始資料 (請參考 `backend/app/crud.py` 中的 `seed_database` 函式)。
-
-5.  **啟動後端服務 (開發)**:
-    *   確保您已在 `backend` 目錄中，並已啟動虛擬環境。
-    *   執行指令啟動服務：
-    ```bash
+    
+    # 複製設定檔
+    cp .env.example .env
+    # 編輯 .env，確保 SQLALCHEMY_DATABASE_URL 指向 localhost
+    
+    # 啟動伺服器
     uvicorn main:app --reload
     ```
-    *   服務將預設在 `http://127.0.0.1:8000` 啟動。
 
-### 前端設定
-
-1.  **進入前端目錄**:
+3.  **設定前端**:
     ```bash
     cd frontend
-    ```
-
-2.  **安裝 Node.js 依賴套件**:
-    ```bash
     npm install
-    ```
-
-3.  **啟動前端開發伺服器**:
-    ```bash
     npm run dev
     ```
-    *   前端應用程式將預設在 `http://localhost:3000` 啟動。
-
-## API 端點概覽 (部分)
-
-後端 API 服務將在 `/api/v1` 路徑下提供以下主要功能：
-
-*   `POST /api/v1/token`: 使用者登入，獲取 JWT Token。
-*   `POST /api/v1/logout`: 使用者登出，使當前 JWT Token 失效。
-*   `POST /api/v1/users/`: 註冊新使用者 (需提供學號綁定學生資料)。
-*   `GET /api/v1/users/me/`: 獲取當前登入使用者的個人資料。
-*   `POST /api/v1/buildings/`: 建立新的棟別。
-*   `GET /api/v1/buildings/`: 查詢所有棟別。
-*   `POST /api/v1/rooms/`: 建立新的寢室。
-*   `GET /api/v1/rooms/`: 查詢所有寢室。
-*   `POST /api/v1/beds/`: 建立新的床位。
-*   `GET /api/v1/beds/`: 查詢所有床位。
-*   `POST /api/v1/students/`: 建立新的學生資料。
-*   `GET /api/v1/students/`: 查詢所有學生資料。
-*   `POST /api/v1/inspections/`: 建立新的檢查紀錄。
-*   `GET /api/v1/inspections/`: 查詢檢查紀錄。
-*   `GET /api/v1/inspections/search`: 進階查詢檢查紀錄。
-*   `GET /api/v1/inspections/{record_id}/pdf`: 匯出指定檢查紀錄的 PDF 報表。
-
-### 建立初始管理員帳號 (選填)
-首次啟動後端服務後，您可以透過以下 `curl` 指令創建一個管理員帳號。請將 `admin` 和 `admin` 替換為您想要的用戶名和密碼，並將 `B11111111` 替換為一個有效的學生學號（如果需要綁定）。
-```bash
-curl -X POST "http://127.0.0.1:8000/api/v1/users/" \
-     -H "Content-Type: application/json" \
-     -d '{"username": "admin", "password": "admin", "student_id_number": "B11111111"}'
-```
-
-## 郵件通知功能使用說明
-
-此功能允許管理員直接從應用程式向各學生群組發送電子郵件通知。要使用此功能，您需要配置後端郵件設定，然後使用前端介面。
-
-**1. 後端配置 (必填設定):**
-
-在發送任何電子郵件之前，後端應用程式需要知道您的電子郵件伺服器詳細資訊。這是透過在 `backend/` 目錄中的 `.env` 檔案中設定環境變數來完成的。
-
-*   **定位/建立 `.env` 檔案:** 在 `backend/` 目錄中，開啟 (`.env`) 檔案 (如果存在) 或建立一個新檔案。
-*   **新增郵件伺服器詳細資訊:** 將以下行添加到您的 `.env` 檔案中，並將佔位符值替換為您的實際 SMTP 伺服器憑證和資訊：
-
-    ```
-    MAIL_USERNAME="your_email@example.com"      # 用於發送郵件的電子郵件地址
-    MAIL_PASSWORD="your_email_password"        # 您的電子郵件帳戶密碼
-    MAIL_FROM="your_email@example.com"         # 郵件的「寄件者」地址
-    MAIL_SERVER="smtp.example.com"             # 您的 SMTP 伺服器主機 (例如：smtp.gmail.com)
-    MAIL_PORT=587                              # 您的 SMTP 伺服器埠號 (常用：TLS 為 587，SSL 為 465)
-    MAIL_TLS=True                              # 如果您的 SMTP 伺服器使用 TLS (推薦)，則設定為 True
-    ```
-*   **重啟後端:** 對 `.env` 檔案進行更改後，您**必須**重新啟動後端伺服器，更改才會生效。
-
-**2. 前端使用 (發送郵件):**
-
-後端配置完成後，您可以使用使用者介面撰寫和發送通知。
-
-*   **存取頁面:** 導航到前端應用程式管理部分中的「郵件通知」頁面 (通常位於類似 `http://localhost:3000/admin/email-notifications` 的 URL)。
-*   **選擇收件人:** 從「收件人」下拉選單中選擇以下選項之一：
-    *   **所有學生:** 將電子郵件發送給系統中所有已連結使用者帳戶的註冊學生。
-    *   **大樓內的學生:** 選擇此項，然後從出現的新下拉選單中選擇特定的大樓。
-    *   **房間內的學生:** 選擇此項，然後從出現的新下拉選單中選擇特定的房間。
-    *   **家庭內的學生:** 選擇此項，然後輸入特定的家庭識別碼 (例如：「A1201」)。
-    *   **自訂收件人:** 選擇此項，然後在提供的文字欄位中輸入以逗號分隔的特定電子郵件地址列表 (例如：`email1@example.com, email2@example.com`)。
-*   **撰寫郵件:**
-    *   **主旨:** 在「主旨」欄位中輸入電子郵件的主旨行。
-    *   **內容:** 在「訊息」文字區域中撰寫電子郵件的主要內容。
-*   **發送:** 點擊「發送郵件」按鈕。系統將嘗試發送電子郵件。您將收到一條通知 (snackbar)，確認成功或指示任何錯誤。
-
-**3. 權限:**
-
-*   要使用此功能，發送郵件的使用者必須擁有其角色分配的 `manage_users` 權限。
-
+    *瀏覽器打開 http://localhost:3000 即可看到畫面。*
 
 ---
 
-## 部署 (Deployment)
+### 2. 伺服器部署 (Production Deployment)
 
-將此專案部署到生產環境時，請遵循以下說明以確保安全性和效能。
+這種模式適合在 Linux 伺服器 (VPS) 上運行正式服務。
 
-### 1. 部署前注意事項
+#### 前置需求
+*   一台安裝好 Docker 與 Docker Compose 的伺服器。
 
-*   **資料庫**: 強烈建議將 `backend/.env` 檔案中的 `SQLALCHEMY_DATABASE_URL` 從開發用的 SQLite 更換為生產級資料庫，例如 MySQL 或 PostgreSQL。
-*   **密鑰**: 請務必在 `backend/.env` 檔案中設定一個長且隨機的 `SECRET_KEY`，以保護使用者 Token 的安全。
-*   **偵錯模式**: 為了安全和效能，應關閉偵錯模式。
-    *   **後端**: 在 `backend/app/config.py` 中，可以透過環境變數將 `DEBUG` 設為 `False`。
-    *   **前端**: `frontend/nuxt.config.ts` 已設定在生產環境建置時自動移除 `console` 和 `debugger` 指令。
+#### 步驟
+1.  **準備檔案**:
+    將 `docker-compose.prod.yml` 與 `backend/.env` 上傳至伺服器。
 
-### 2. 後端部署
+2.  **設定環境變數**:
+    *   修改 `.env`: 設定強密碼的 `SECRET_KEY`，將 `DEBUG` 設為 `False`。
+    *   修改 `docker-compose.prod.yml`: 修改 `MYSQL_PASSWORD` 與 `MYSQL_ROOT_PASSWORD` 為強密碼。
 
-後端服務應在沒有 `--reload` 選項的情況下啟動，並監聽所有網路介面 (`0.0.0.0`) 以便從外部存取。
-
-**啟動指令:** 
-```bash
-# 進入後端目錄
-cd backend
-
-# 確保虛擬環境已啟用
-# Windows: .\.venv\Scripts\activate
-# macOS/Linux: source .venv/bin/activate
-
-# 使用 uvicorn 啟動生產服務
-uvicorn main:app --host 0.0.0.0 --port 8000
-```
-
-為了獲得更好的穩定性和效能，建議使用 Gunicorn 來管理 Uvicorn 程序。
-```bash
-# 範例：使用 Gunicorn 啟動 4 個 worker
-# 注意：若要使用 Gunicorn，需先執行 pip install gunicorn
-gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:8000
-```
-
-### 3. 前端部署
-
-前端應用程式在開發時使用 Vite 代理 (proxy) 將 `/api` 請求轉發到後端。在生產環境中，推薦使用 Web 伺服器 (如 Nginx) 來提供靜態檔案並設定反向代理，這樣您就不需要修改任何前端程式碼。
-
-1.  **建置前端應用程式**:
+3.  **登入 GitHub Registry**:
     ```bash
-    # 進入前端目錄
-    cd frontend
-
-    # 安裝依賴
-    npm install
-
-    # 執行生產環境建置
-    npm run build
+    docker login ghcr.io -u <GitHub帳號> -p <GitHub_Token>
     ```
-    這會在 `frontend/.output/public` 目錄下產生優化過的靜態檔案。
 
-2.  **設定 Web 伺服器 (Nginx 範例)**:
-    您需要設定您的 Web 伺服器來提供這些靜態檔案，並將 API 請求反向代理到後端服務。
-
-    以下是一個 Nginx 的設定檔範例：
-    ```nginx
-    server {
-        listen 80;
-        server_name your_domain.com; # 替換為您的域名或 IP
-
-        # 提供前端靜態檔案
-        location / {
-            root /path/to/your/project/frontend/.output/public;
-            try_files $uri $uri/ /index.html;
-        }
-
-        # 將 API 請求反向代理到後端 FastAPI 服務
-        location /api/v1/ {
-            proxy_pass http://127.0.0.1:8000/api/v1/;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-    }
+4.  **啟動服務**:
+    ```bash
+    # 拉取最新映像檔
+    docker compose -f docker-compose.prod.yml pull
+    
+    # 啟動容器
+    docker compose -f docker-compose.prod.yml up -d
     ```
-    *   請記得將 `your_domain.com` 和 `/path/to/your/project/` 替換為您專案的實際域名和路徑。
-    *   此設定會讓前端應用程式在根目錄 (`/`) 提供服務，並將所有 `/api/v1/` 開頭的請求轉發給在本機 8000 port 運行的後端服務。
+
+5.  **訪問網站**:
+    *   網站首頁: `http://<Server-IP>`
+    *   phpMyAdmin: `http://<Server-IP>/sys_db_admin_x9zp2/`
 
 ---
 
-## 使用 Docker 部署 (Deployment with Docker)
+## 🔄 CI/CD 流程
 
-本專案已設定好 Docker，讓您可以透過 `docker-compose` 快速啟動一個包含所有服務的完整環境。
+本專案已設定 GitHub Actions 自動化流程 (`.github/workflows/docker-publish.yml`)。
 
-### 前置條件
-*   **Docker**: [安裝 Docker](https://docs.docker.com/get-docker/)
-*   **Docker Compose**: (通常會跟 Docker 一起安裝)
+1.  **觸發條件**: 當程式碼 Push 到 `main` 分支時。
+2.  **執行動作**:
+    *   自動建立 Frontend、Backend 與 Nginx 的 Docker Image。
+    *   自動將 Image 推送到 GitHub Container Registry (GHCR)。
+3.  **部署**: 伺服器端只需執行 `docker compose pull` 即可更新到最新版。
 
-### 1. 環境設定
-Docker 環境的設定由 `docker-compose.yml` 檔案管理。後端服務的設定（如資料庫連線、JWT 密鑰）會從 `backend/.env` 檔案讀取。
+## 📂 目錄結構 (Directory Structure)
 
-*   請先確保 `backend/.env` 檔案已存在並包含正確的設定。
-*   **重要**: 如果您想在 Docker 環境中也運行資料庫，您可以在 `docker-compose.yml` 中取消資料庫服務的註解，並將 `backend/.env` 中的 `SQLALCHEMY_DATABASE_URL` 的主機位址 (`host`) 改為資料庫服務的名稱 (例如 `db`)。
-    *   `SQLALCHEMY_DATABASE_URL="mysql+aiomysql://user:password@db/dbname"`
-
-### 2. 啟動應用程式
-在專案的根目錄（與 `docker-compose.yml` 相同的目錄）執行以下指令：
-
-```bash
-# --build 會強制重新建置映像檔，確保程式碼的變更被應用
-docker-compose up --build
+```
+.
+├── backend/                # FastAPI 後端程式碼
+│   ├── app/                # 核心應用邏輯 (Models, APIs, CRUD)
+│   ├── alembic/            # 資料庫遷移腳本
+│   ├── uploads/            # 使用者上傳的圖片 (掛載 Volume)
+│   └── Dockerfile          # 後端 Docker 建置檔
+├── frontend/               # Nuxt 3 前端程式碼
+│   ├── pages/              # 頁面路由
+│   ├── components/         # Vue 元件
+│   ├── stores/             # Pinia 狀態管理
+│   └── Dockerfile          # 前端 Docker 建置檔
+├── nginx/                  # Nginx 設定與 Dockerfile
+├── docker-compose.yml      # 開發環境 Docker 設定
+├── docker-compose.prod.yml # 生產環境 Docker 設定
+└── .github/workflows/      # CI/CD 設定檔
 ```
 
-這個指令會：
-1.  為後端和前端分別建立 Docker 映像檔。
-2.  啟動後端、前端和 Nginx 反向代理三個容器。
-3.  Nginx 會監聽 `http://localhost:80`，並自動將請求轉發到對應的前端或後端服務。
+## 📝 License
 
-### 3. 存取應用程式
-啟動成功後，您可以直接在瀏覽器中開啟 `http://localhost` 來存取應用程式。
-
-### 4. 停止應用程式
-若要停止所有服務，請在同一個目錄下按 `Ctrl + C`，然後執行：
-
-```bash
-docker-compose down
-```
-這個指令會停止並移除所有相關的容器和網路。
+此專案採用 MIT License。
