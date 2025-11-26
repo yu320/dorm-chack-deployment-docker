@@ -18,6 +18,8 @@ const { theme, toggleTheme } = useTheme();
 const { showSnackbar } = useSnackbar();
 
 const { isOpen: isLangOpen, dropdownRef: langDropdownRef, toggleRef: langToggleRef, toggle: toggleLangDropdown, close: closeLangDropdown } = useDropdown();
+const { isOpen: isAdminOpen, dropdownRef: adminDropdownRef, toggleRef: adminToggleRef, toggle: toggleAdminDropdown, close: closeAdminDropdown } = useDropdown();
+const { isOpen: isPatrolOpen, dropdownRef: patrolDropdownRef, toggleRef: patrolToggleRef, toggle: togglePatrolDropdown, close: closePatrolDropdown } = useDropdown();
 
 // Admin Dropdowns
 const { isOpen: isInspOpen, dropdownRef: inspDropdownRef, toggleRef: inspToggleRef, toggle: toggleInspDropdown, close: closeInspDropdown } = useDropdown();
@@ -33,6 +35,10 @@ const changePasswordData = reactive({
   new_password: '',
   confirm_password: '',
 });
+
+const showCurrentPassword = ref(false);
+const showNewPassword = ref(false);
+const showConfirmPassword = ref(false);
 
 const openChangePasswordModal = () => {
   // Reset fields when opening
@@ -130,11 +136,13 @@ const handleLogout = async () => {
 
               <!-- Dark Mode Toggle -->
               <button @click="toggleTheme" class="flex-shrink-0 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200 min-w-0">
-                <svg v-if="theme === 'light'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                <!-- Sun Icon (Show when in Dark Mode to switch to Light) -->
+                <svg v-if="theme === 'dark'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
                 </svg>
-                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 4a1 1 0 011 1v1a1 1 0 11-2 0V7a1 1 0 011-1zM3 10a1 1 0 011-1h1a1 1 0 110 2H4a1 1 0 01-1-1zm14 0a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1zm-9 9a1 1 0 011-1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4-4a1 1 0 011-1h1a1 1 0 110 2H7a1 1 0 01-1-1zm10 0a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1zM6 10a4 4 0 118 0 4 4 0 01-8 0z" clip-rule="evenodd" />
+                <!-- Moon Icon (Show when in Light Mode to switch to Dark) -->
+                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clip-rule="evenodd" />
                 </svg>
               </button>
             </div>
@@ -148,7 +156,9 @@ const handleLogout = async () => {
             </div>
             <div class="w-full sm:w-auto">
               <button @click="openChangePasswordModal" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg transition duration-300 transform hover:scale-105 shadow-sm flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H5v-2H3v-2H1v-4a1 1 0 011-1h2V7a1 1 0 011-1h2V5a1 1 0 011-1h2V3a1 1 0 011-1h2V1a1 1 0 011-1h2V-1" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                  <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" />
+                </svg>
                 {{ $t('header.changePassword') }}
               </button>
             </div>
@@ -169,7 +179,7 @@ const handleLogout = async () => {
         </div>
       </div>
     </header>
-    <div class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
+    <div v-if="isAuthenticated" class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
       <div class="container mx-auto px-4">
         <div class="flex flex-wrap border-b border-gray-200 dark:border-gray-700 w-full" :class="{'!flex !flex-col': mobileMenuOpen}">
           <NuxtLink :to="localePath('/')" @click="mobileMenuOpen = false" class="tab-button" active-class="tab-active">{{ $t('navigation.home') }}</NuxtLink>
@@ -230,6 +240,53 @@ const handleLogout = async () => {
             <NuxtLink :to="localePath('/records')" @click="mobileMenuOpen = false" class="tab-button" active-class="tab-active">{{ $t('navigation.myRecords') }}</NuxtLink>
           </template>
 
+          <!-- Patrol Navigation -->
+          <div v-if="isAuthenticated" class="relative">
+            <button ref="patrolToggleRef" @click="togglePatrolDropdown" class="tab-button flex items-center" :class="{ 'tab-active': $route.path.startsWith('/patrol') }">
+              <span>{{ $t('navigation.patrol') }}</span>
+              <svg class="w-4 h-4 ml-1 transition-transform" :class="{'rotate-180': isPatrolOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <div ref="patrolDropdownRef" v-if="isPatrolOpen" class="dropdown-menu-floating right-0" :class="{'dropdown-active': isPatrolOpen}">
+              <NuxtLink v-if="hasPermission('manage_patrol_locations')" :to="localePath('/patrol/locations')" @click="closePatrolDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.patrolLocations') }}</NuxtLink>
+              <NuxtLink v-if="hasPermission('lights_out_check_perform')" :to="localePath('/patrol/inspect')" @click="closePatrolDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.performInspection') }}</NuxtLink>
+              <NuxtLink v-if="hasPermission('lights_out_check_perform')" :to="localePath('/patrol/history')" @click="closePatrolDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.inspectionHistory') }}</NuxtLink>
+            </div>
+          </div>
+
+          <div v-if="isAdmin" class="relative">
+            <button ref="adminToggleRef" @click="toggleAdminDropdown" class="tab-button flex items-center" :class="{ 'tab-active': $route.path.startsWith('/admin') && $route.path !== '/admin/dashboard' && $route.path !== '/admin/new-inspection' }">
+              <span>{{ $t('navigation.admin') }}</span>
+              <svg class="w-4 h-4 ml-1 transition-transform" :class="{'rotate-180': isAdminOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <div ref="adminDropdownRef" v-if="isAdminOpen" class="dropdown-menu-floating right-0" :class="{'dropdown-active': isAdminOpen}">
+              <!-- 檢查管理 -->
+              <NuxtLink :to="localePath('/admin/inspections')" @click="closeAdminDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.inspections') }}</NuxtLink>
+              <NuxtLink :to="localePath('/admin/records')" @click="closeAdminDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.records') }}</NuxtLink>
+              <NuxtLink :to="localePath('/admin/items')" @click="closeAdminDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.items') }}</NuxtLink>
+              
+              <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
+              
+              <!-- 資料管理 -->
+              <NuxtLink :to="localePath('/admin/students')" @click="closeAdminDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.students') }}</NuxtLink>
+              <NuxtLink :to="localePath('/admin/rooms')" @click="closeAdminDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.rooms') }}</NuxtLink>
+              <NuxtLink :to="localePath('/admin/rooms-students')" @click="closeAdminDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.roomsStudents') }}</NuxtLink>
+              
+              <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
+              
+              <!-- 系統設定 -->
+              <NuxtLink :to="localePath('/admin/users')" @click="closeAdminDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.users') }}</NuxtLink>
+              <NuxtLink :to="localePath('/admin/settings')" @click="closeAdminDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.settings') }}</NuxtLink>
+              
+              <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
+              
+              <!-- 工具功能 -->
+              <NuxtLink :to="localePath('/admin/advanced-search')" @click="closeAdminDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.advancedSearch') }}</NuxtLink>
+              <NuxtLink :to="localePath('/admin/pdf-reports')" @click="closeAdminDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.pdfReports') }}</NuxtLink>
+              <NuxtLink :to="localePath('/admin/email-notifications')" @click="closeAdminDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.emailNotifications') }}</NuxtLink>
+              <NuxtLink :to="localePath('/admin/data-backup')" @click="closeAdminDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.dataBackup') }}</NuxtLink>
+              <NuxtLink :to="localePath('/admin/data-import')" @click="closeAdminDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ $t('navigation.dataImport') }}</NuxtLink>
+            </div>
+          </div>
           <template v-if="isAuthenticated">
           </template>
         </div>
@@ -243,15 +300,57 @@ const handleLogout = async () => {
           <div class="space-y-4">
             <div>
               <label for="current_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ $t('login.password') }}</label>
-              <input type="password" v-model="changePasswordData.current_password" id="current_password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+              <div class="relative">
+                <input type="password" v-model="changePasswordData.current_password" id="current_password" :type="showCurrentPassword ? 'text' : 'password'" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm pr-10" required>
+                <button
+                  type="button"
+                  @click="showCurrentPassword = !showCurrentPassword"
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-700 dark:text-gray-300 focus:outline-none"
+                >
+                                  <svg v-if="!showCurrentPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  </svg>
+                                  <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                                  </svg>                </button>
+              </div>
             </div>
             <div>
               <label for="new_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ $t('login.newPassword') }}</label>
-              <input type="password" v-model="changePasswordData.new_password" id="new_password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+              <div class="relative">
+                <input type="password" v-model="changePasswordData.new_password" id="new_password" :type="showNewPassword ? 'text' : 'password'" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm pr-10" required>
+                <button
+                  type="button"
+                  @click="showNewPassword = !showNewPassword"
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-700 dark:text-gray-300 focus:outline-none"
+                >
+                                  <svg v-if="!showNewPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  </svg>
+                                  <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                                  </svg>                </button>
+              </div>
             </div>
             <div>
               <label for="confirm_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ $t('login.confirmPassword') }}</label>
-              <input type="password" v-model="changePasswordData.confirm_password" id="confirm_password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+              <div class="relative">
+                <input type="password" v-model="changePasswordData.confirm_password" id="confirm_password" :type="showConfirmPassword ? 'text' : 'password'" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm pr-10" required>
+                <button
+                  type="button"
+                  @click="showConfirmPassword = !showConfirmPassword"
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-700 dark:text-gray-300 focus:outline-none"
+                >
+                                  <svg v-if="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  </svg>
+                                  <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                                  </svg>                </button>
+              </div>
             </div>
           </div>
           <div class="flex justify-end space-x-4 mt-6">

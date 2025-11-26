@@ -8,7 +8,11 @@
     </main>
     <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4 mt-8">
       <div class="container mx-auto text-center text-sm text-gray-500 dark:text-gray-400">
-        <p>{{ $t('footer.copyright', { year: new Date().getFullYear() }) }}</p>
+        <p class="mb-2">{{ $t('footer.copyright', { year: new Date().getFullYear() }) }}</p>
+        <p class="flex justify-center items-center gap-2">
+          <Icon name="heroicons:phone" class="w-4 h-4" />
+          <span>05-534-2601</span>
+        </p>
       </div>
     </footer>
     <Snackbar />

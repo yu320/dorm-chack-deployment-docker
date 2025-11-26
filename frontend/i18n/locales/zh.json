@@ -445,6 +445,205 @@
     "emailNotifications": "郵件通知",
     "dataBackup": "資料備份",
     "dataImport": "資料匯入",
+    "patrol": "巡視",
+    "patrolLocations": "公共空間管理",
+    "performInspection": "執行巡視",
+    "inspectionHistory": "巡視記錄",
+    "logout": "登出"
+  },
+  "pagination": {
+    "previous": "上一頁",
+    "next": "下一頁"
+  },
+  "header": {
+    "title": "宿舍檢查",
+    "subtitle": "檢查與報告系統",
+    "welcome": "歡迎",
+    "logout": "登出",
+    "changePassword": "修改密碼"
+  },
+  "loading": "載入中...",
+  "noOptions": "沒有選項",
+  "items": {
+    "desk": "書桌",
+    "chair": "椅子",
+    "bed": "床"
+  },
+  "footer": {
+    "copyright": "© {year} 學生宿舍檢查系統. 保留所有權利."
+  },
+  "permissions": {
+    "admin:full_access": {
+      "title": "完全管理權限",
+      "description": "授予完整的系統管理權限"
+    },
+    "users:view": {
+      "title": "查看使用者",
+      "description": "可以查看使用者帳號"
+    },
+    "users:manage": {
+      "title": "管理使用者",
+      "description": "可以建立、更新和刪除使用者帳號"
+    },
+    "roles:view": {
+      "title": "查看角色",
+      "description": "可以查看角色及其權限"
+    },
+    "roles:manage": {
+      "title": "管理角色",
+      "description": "可以建立、更新和刪除角色與權限"
+    },
+    "students:view": {
+      "title": "查看學生",
+      "description": "可以查看學生資料"
+    },
+    "students:manage": {
+      "title": "管理學生",
+      "description": "可以建立、更新和刪除學生資料"
+    },
+    "rooms:view": {
+      "title": "查看房間",
+      "description": "可以查看房間資訊"
+    },
+    "rooms:manage": {
+      "title": "管理房間",
+      "description": "可以建立、更新和刪除房間資訊"
+    },
+    "inspections:view": {
+      "title": "查看檢查紀錄",
+      "description": "可以查看檢查紀錄"
+    },
+    "inspections:submit": {
+      "title": "提交檢查紀錄",
+      "description": "可以提交新的檢查紀錄"
+    },
+    "dataBackup": {
+      "title": "資料備份與還原",
+      "description": "匯出或匯入整個系統的資料。",
+      "exportSectionTitle": "匯出資料",
+      "exportDescription": "將所有系統資料匯出為 JSON 檔案。這可用於備份或遷移。",
+      "exportButton": "匯出所有資料",
+      "importSectionTitle": "匯入資料",
+      "importDescription": "從 JSON 檔案匯入資料。這將覆蓋現有資料。",
+      "importFileLabel": "JSON 備份檔案",
+      "importButton": "匯入資料",
+      "exportSuccess": "資料匯出成功！",
+      "exportFailed": "資料匯出失敗。",
+      "importSuccess": "資料匯入成功！",
+      "importFailed": "資料匯入失敗。",
+      "importConfirm": "您確定要匯入資料嗎？這將覆蓋所有現有資料且無法復原。",
+      "selectFilePrompt": "請選擇一個檔案。"
+    },
+    "dataImport": {
+      "title": "資料匯入",
+      "description": "上傳 CSV 或 Excel 檔案以批次匯入或更新學生和房間資訊。請確保您的檔案遵循範本格式。",
+      "fileLabel": "CSV 或 Excel 檔案",
+      "uploadAFile": "上傳檔案",
+      "orDragAndDrop": "或拖放",
+      "fileTypes": "CSV, XLSX, 最大 10MB",
+      "selectedFile": "已選檔案",
+      "importButton": "上傳並匯入",
+      "importing": "匯入中...",
+      "resultsTitle": "匯入結果",
+      "importSuccess": "資料匯入成功！",
+      "importFailed": "資料匯入失敗。",
+      "created": "已建立紀錄",
+      "updated": "已更新紀錄"
+    }
+  },
+  "snackbar": {
+    "failedToLoadStudents": "載入學生失敗。",
+    "studentUpdated": "學生更新成功！",
+    "studentCreated": "學生建立成功！",
+    "failedToSaveStudent": "儲存學生資料失敗。",
+    "studentDeleted": "學生刪除成功！",
+    "failedToDeleteStudent": "刪除學生失敗。",
+    "failedToLoadUsers": "載入使用者列表失敗。",
+    "userUpdated": "使用者更新成功！",
+    "userCreated": "使用者建立成功！",
+    "failedToSaveUser": "儲存使用者失敗。",
+    "loginFailed": "登入失敗，請檢查您的帳號或密碼。",
+    "failedToLoadRoles": "載入角色列表失敗。",
+    "failedToLoadPermissions": "載入權限列表失敗。",
+    "roleUpdated": "角色更新成功！",
+    "roleCreated": "角色建立成功！",
+    "failedToSaveRole": "儲存角色失敗。",
+    "roleDeleted": "角色刪除成功！",
+    "failedToDeleteRole": "刪除角色失敗。",
+    "failedToLoadBuildings": "載入建築物列表失敗。",
+    "failedToLoadPatrolLocations": "載入巡邏地點失敗。",
+    "patrolLocationSaved": "巡邏地點儲存成功！",
+    "failedToSavePatrolLocation": "儲存巡邏地點失敗。",
+    "patrolLocationDeleted": "巡邏地點刪除成功！",
+    "failedToDeletePatrolLocation": "刪除巡邏地點失敗。",
+    "failedToLoadRecord": "載入紀錄失敗。",
+    "statusUpdated": "狀態更新成功！",
+    "failedToUpdateStatus": "更新狀態失敗。",
+    "enterRecipientEmail": "請輸入收件人電子郵件地址。",
+    "reportEmailed": "報告已成功通過電子郵件發送！",
+    "failedToEmailReport": "未能通過電子郵件發送報告。",
+    "failedToLoadBuildingData": "載入床位選擇的建築數據失敗。",
+    "failedToLoadRecords": "載入紀錄失敗。",
+    "failedToFetchRecords": "載入紀錄失敗。",
+    "failedToLoadData": "載入資料失敗。",
+    "failedToLoadInspections": "載入檢查紀錄失敗。",
+    "itemSaved": "{item} 儲存成功！",
+    "failedToSaveItem": "儲存 {item} 失敗。",
+    "itemDeleted": "{item} 刪除成功！",
+    "failedToDeleteItem": "刪除 {item} 失敗。",
+    "failedToLoadInspectionItems": "載入檢查項目失敗。",
+    "signaturePadNotReady": "簽名板尚未準備好。",
+    "provideSignature": "請提供簽名。",
+    "inspectionSubmitted": "檢查已成功提交！",
+    "failedToSubmitInspection": "提交檢查失敗。",
+    "failedToLoadTargets": "載入目標失敗。",
+    "batchUpdateItemStatusSuccess": "批量更新項目狀態成功！",
+    "batchUpdateItemStatusFailed": "批量更新項目狀態失敗。",
+    "selectOneTable": "請至少選擇一個要匯出的資料表。",
+    "dataExported": "資料匯出成功！",
+    "failedToExportData": "資料匯出失敗。",
+    "noInspectionItemsFound": "找不到檢查項目。",
+    "failedToLoadItems": "載入項目失敗。",
+    "itemUpdated": "項目更新成功！",
+    "itemCreated": "項目建立成功！",
+    "passwordsDoNotMatch": "新密碼與確認密碼不符。",
+    "passwordChangedSuccessfully": "密碼修改成功！",
+    "failedToChangePassword": "修改密碼失敗。",
+    "selectAnImageFile": "請選擇一個圖片檔案。",
+    "imageCompressionFailed": "圖片壓縮失敗。"
+  },
+  "confirm": {
+    "deleteRole": "您確定要刪除此角色嗎？",
+    "deletePatrolLocation": "您確定要刪除此巡邏地點嗎？",
+    "deleteStudent": "您確定要刪除這位學生嗎？",
+    "deleteItem": "您確定要刪除此項目嗎？",
+    "loadDraft": "發現未儲存的草稿，請問要載入嗎？"
+  },
+  "navigation": {
+    "home": "首頁",
+    "inspection": "檢查",
+    "newInspection": "新增檢查",
+    "myRecords": "我的紀錄",
+    "admin": "管理",
+    "newAdminInspection": "新增管理員檢查",
+    "dashboard": "儀表板",
+    "inspections": "檢查",
+    "records": "所有紀錄",
+    "advancedSearch": "進階搜尋",
+    "students": "學生",
+    "rooms": "房間",
+    "roomsStudents": "房間與學生",
+    "items": "項目",
+    "users": "使用者",
+    "settings": "設定",
+    "pdfReports": "PDF 報告",
+    "emailNotifications": "郵件通知",
+    "dataBackup": "資料備份",
+    "dataImport": "資料匯入",
+    "patrol": "巡視",
+    "patrolLocations": "公共空間管理",
+    "performInspection": "執行巡視",
+    "inspectionHistory": "巡視記錄",
     "logout": "登出"
   },
   "pagination": {
