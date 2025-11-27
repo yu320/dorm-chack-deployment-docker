@@ -1,31 +1,34 @@
-version: '3.8'
-
 services:
   backend:
-    # CHANGE THIS: Replace with your actual image path
-    # Format: ghcr.io/<username>/<repo-name>/backend:latest
-    image: ghcr.io/your-username/your-repo-name/backend:latest
+    # 使用 GitHub Actions 自動建置的映像檔
+    image: ghcr.io/yu320/dorm-chack-deployment-docker/backend:latest
     restart: always
+    # 讀取 Dockge 介面設定的環境變數 (.env)
     env_file:
-      - backend/.env
+      - .env
     volumes:
+      # [重要] 持久化保存使用者上傳的照片
       - ./uploads:/app/uploads
     networks:
       - app-network
 
   frontend:
-    # CHANGE THIS: Replace with your actual image path
-    image: ghcr.io/your-username/your-repo-name/frontend:latest
+    image: ghcr.io/yu320/dorm-chack-deployment-docker/frontend:latest
     restart: always
     networks:
       - app-network
 
   nginx:
-    # CHANGE THIS: Replace with your actual image path
-    image: ghcr.io/your-username/your-repo-name/nginx:latest
+    # 雖然 GHCR 裡有包設定檔，但我們這裡選擇掛載「本地設定檔」
+    # 這樣您可以直接在 TrueNAS 修改 default.conf (例如調整上傳限制)，不用重包映像檔
+    image: ghcr.io/yu320/dorm-chack-deployment-docker/nginx:latest
     restart: always
     ports:
-      - "80:80"
+      # [關鍵] 外部 8081 對應內部 80
+      # NPM (Nginx Proxy Manager) 請轉發到此 Port
+      - "8081:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - backend
       - frontend
@@ -37,10 +40,10 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: 'app_db'
-      # SECURITY WARNING: You MUST change these passwords in your server environment!
       MYSQL_USER: 'prod_user'
-      MYSQL_PASSWORD: 'CHANGE_THIS_PASSWORD_TO_SOMETHING_SECURE'
-      MYSQL_ROOT_PASSWORD: 'CHANGE_THIS_ROOT_PASSWORD_TO_SOMETHING_SECURE' 
+      # [安全性] 引用 .env 變數，請勿直接寫死密碼
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     volumes:
       - db-data:/var/lib/mysql
     networks:
@@ -52,7 +55,8 @@ services:
     environment:
       PMA_HOST: db
       PMA_USER: prod_user
-      PMA_PASSWORD: 'CHANGE_THIS_PASSWORD_TO_SOMETHING_SECURE'
+      PMA_PASSWORD: ${DB_PASSWORD}
+      # 必須配合 nginx/default.conf 的設定
       PMA_ABSOLUTE_URI: /sys_db_admin_x9zp2/
     networks:
       - app-network
