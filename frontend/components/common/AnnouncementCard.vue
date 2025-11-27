@@ -11,11 +11,11 @@
     </div>
     
     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-      {{ title }}
+      {{ displayTitle }}
     </h3>
     
     <p class="text-gray-600 dark:text-gray-400 line-clamp-3 mb-6 flex-grow">
-      {{ content }}
+      {{ displayContent }}
     </p>
     
     <NuxtLink :to="localePath(`/announcements/${id}`)" class="flex items-center text-primary-600 dark:text-primary-400 font-medium text-sm group-hover:translate-x-1 transition-transform mt-auto inline-flex">
@@ -29,13 +29,26 @@
 const props = defineProps<{
   id: string | number;
   title: string;
+  titleEn?: string;
   date: string;
   tag: string;
   tagType?: 'primary' | 'success' | 'warning' | 'danger' | 'info';
   content: string;
+  contentEn?: string;
 }>();
 
 const localePath = useLocalePath();
+const { locale } = useI18n();
+
+const displayTitle = computed(() => {
+  if (locale.value === 'en' && props.titleEn) return props.titleEn;
+  return props.title;
+});
+
+const displayContent = computed(() => {
+  if (locale.value === 'en' && props.contentEn) return props.contentEn;
+  return props.content;
+});
 
 const tagColorClasses = computed(() => {
   const colors = {

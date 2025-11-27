@@ -23,11 +23,11 @@
           </div>
 
           <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-8 leading-tight">
-            {{ announcement.title }}
+            {{ displayTitle }}
           </h1>
 
           <div class="prose prose-lg dark:prose-invert max-w-none text-gray-600 dark:text-gray-300">
-            <p class="whitespace-pre-wrap">{{ announcement.content }}</p>
+            <p class="whitespace-pre-wrap">{{ displayContent }}</p>
           </div>
         </div>
       </div>
@@ -44,6 +44,7 @@ import { useAnnouncements } from '~/composables/useAnnouncements';
 const route = useRoute();
 const localePath = useLocalePath();
 const { getAnnouncement } = useAnnouncements();
+const { locale } = useI18n();
 
 const id = route.params.id as string;
 const announcement = ref(null);
@@ -59,6 +60,18 @@ onMounted(async () => {
   }
 });
 
+const displayTitle = computed(() => {
+  if (!announcement.value) return '';
+  if (locale.value === 'en' && announcement.value.title_en) return announcement.value.title_en;
+  return announcement.value.title;
+});
+
+const displayContent = computed(() => {
+  if (!announcement.value) return '';
+  if (locale.value === 'en' && announcement.value.content_en) return announcement.value.content_en;
+  return announcement.value.content;
+});
+
 const tagColorClasses = computed(() => {
   const colors = {
     primary: 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400',
@@ -71,6 +84,6 @@ const tagColorClasses = computed(() => {
 });
 
 useHead({
-  title: computed(() => announcement.value ? `${announcement.value.title} - 公告` : '公告詳情')
+  title: computed(() => announcement.value ? `${displayTitle.value} - 公告` : '公告詳情')
 });
 </script>

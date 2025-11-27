@@ -104,15 +104,27 @@
         <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">{{ modalTitle }}</h3>
         <form @submit.prevent="handleSave">
           <div class="space-y-4">
-            <div>
-              <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">標題</label>
-              <input 
-                type="text" 
-                v-model="editableAnnouncement.title" 
-                id="title" 
-                class="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" 
-                required
-              >
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">標題 (中文)</label>
+                <input 
+                  type="text" 
+                  v-model="editableAnnouncement.title" 
+                  id="title" 
+                  class="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" 
+                  required
+                >
+              </div>
+              <div>
+                <label for="title_en" class="block text-sm font-medium text-gray-700 dark:text-gray-300">標題 (英文 - 選填)</label>
+                <input 
+                  type="text" 
+                  v-model="editableAnnouncement.title_en" 
+                  id="title_en" 
+                  class="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" 
+                  placeholder="English Title"
+                >
+              </div>
             </div>
             
             <div class="grid grid-cols-2 gap-4">
@@ -146,13 +158,24 @@
             </div>
 
             <div>
-              <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300">內容</label>
+              <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300">內容 (中文)</label>
               <textarea 
                 v-model="editableAnnouncement.content" 
                 id="content" 
-                rows="6" 
+                rows="4" 
                 class="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" 
                 required
+              ></textarea>
+            </div>
+
+            <div>
+              <label for="content_en" class="block text-sm font-medium text-gray-700 dark:text-gray-300">內容 (英文 - 選填)</label>
+              <textarea 
+                v-model="editableAnnouncement.content_en" 
+                id="content_en" 
+                rows="4" 
+                class="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500" 
+                placeholder="English Content"
               ></textarea>
             </div>
 
@@ -254,7 +277,7 @@ const changePage = (page: number) => {
 const openModal = (mode: 'create' | 'edit', announcement: any = {}) => {
   modalMode.value = mode;
   if (mode === 'create') {
-    editableAnnouncement.value = { title: '', content: '', tag: '', tag_type: 'primary' };
+    editableAnnouncement.value = { title: '', title_en: '', content: '', content_en: '', tag: '', tag_type: 'primary' };
   } else {
     editableAnnouncement.value = { ...announcement };
   }

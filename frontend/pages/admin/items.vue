@@ -96,13 +96,25 @@
       <div class="relative p-8 bg-white dark:bg-gray-800 w-full max-w-md mx-auto rounded-lg shadow-lg">
         <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">{{ isEditMode ? $t('admin.editItem') : $t('admin.createItem') }}</h3>
         <form @submit.prevent="saveItem">
-          <div class="mb-4">
-            <label for="itemName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ $t('admin.name') }}</label>
-            <input type="text" id="itemName" v-model="currentItem.name" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500" required>
+          <div class="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="itemName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ $t('admin.name') }} (中文)</label>
+              <input type="text" id="itemName" v-model="currentItem.name" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500" required>
+            </div>
+            <div>
+              <label for="itemNameEn" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ $t('admin.name') }} (英文)</label>
+              <input type="text" id="itemNameEn" v-model="currentItem.name_en" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+            </div>
           </div>
-          <div class="mb-4">
-            <label for="itemDescription" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ $t('admin.description') }}</label>
-            <textarea id="itemDescription" v-model="currentItem.description" rows="3" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500"></textarea>
+          <div class="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="itemDescription" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ $t('admin.description') }} (中文)</label>
+              <textarea id="itemDescription" v-model="currentItem.description" rows="3" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500"></textarea>
+            </div>
+            <div>
+              <label for="itemDescriptionEn" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ $t('admin.description') }} (英文)</label>
+              <textarea id="itemDescriptionEn" v-model="currentItem.description_en" rows="3" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500"></textarea>
+            </div>
           </div>
           <div v-if="isEditMode" class="mb-4 flex items-center">
             <input type="checkbox" id="itemIsActive" v-model="currentItem.is_active" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
@@ -131,7 +143,9 @@ import { useSnackbar } from '~/composables/useSnackbar';
 interface InspectionItem {
   id: string;
   name: string;
+  name_en?: string;
   description: string;
+  description_en?: string;
   is_active: boolean;
 }
 
@@ -192,7 +206,7 @@ const changePage = (page: number) => {
 
 const openCreateModal = () => {
   isEditMode.value = false;
-  currentItem.value = { name: '', description: '', is_active: true };
+  currentItem.value = { name: '', name_en: '', description: '', description_en: '', is_active: true };
   showModal.value = true;
 };
 
