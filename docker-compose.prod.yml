@@ -1,34 +1,34 @@
-version: '3.8'
-
 services:
   backend:
-    # [修改] 指向您的 GHCR 映像檔
+    # 使用 GitHub Actions 自動建置的映像檔
     image: ghcr.io/yu320/dorm-chack-deployment-docker/backend:latest
     restart: always
-    # [修改] 讓它讀取 Dockge 介面設定的環境變數
+    # 讀取 Dockge 介面設定的環境變數 (.env)
     env_file:
       - .env
     volumes:
-      # 確保上傳的圖片可以持久化保存
+      # [重要] 持久化保存使用者上傳的照片
       - ./uploads:/app/uploads
     networks:
       - app-network
 
   frontend:
-    # [修改] 指向您的 GHCR 映像檔
     image: ghcr.io/yu320/dorm-chack-deployment-docker/frontend:latest
     restart: always
     networks:
       - app-network
 
   nginx:
-    # [修改] 指向您的 GHCR 映像檔 (包含設定檔)
+    # 雖然 GHCR 裡有包設定檔，但我們這裡選擇掛載「本地設定檔」
+    # 這樣您可以直接在 TrueNAS 修改 default.conf (例如調整上傳限制)，不用重包映像檔
     image: ghcr.io/yu320/dorm-chack-deployment-docker/nginx:latest
     restart: always
     ports:
-      # [關鍵修改] 外部 8081 對應內部 80
-      # NPM (Nginx Proxy Manager) 請設定 Forward Host IP 為 TrueNAS IP，Port 為 8081
+      # [關鍵] 外部 8081 對應內部 80
+      # NPM (Nginx Proxy Manager) 請轉發到此 Port
       - "8081:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - backend
       - frontend
@@ -41,7 +41,7 @@ services:
     environment:
       MYSQL_DATABASE: 'app_db'
       MYSQL_USER: 'prod_user'
-      # [安全性] 使用變數，請在 Dockge 的 .env 區域設定密碼
+      # [安全性] 引用 .env 變數，請勿直接寫死密碼
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     volumes:
@@ -56,7 +56,7 @@ services:
       PMA_HOST: db
       PMA_USER: prod_user
       PMA_PASSWORD: ${DB_PASSWORD}
-      # 這是配合您 Nginx config 中的設定
+      # 必須配合 nginx/default.conf 的設定
       PMA_ABSOLUTE_URI: /sys_db_admin_x9zp2/
     networks:
       - app-network
