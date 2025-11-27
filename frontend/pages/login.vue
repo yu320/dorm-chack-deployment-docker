@@ -6,7 +6,7 @@
     <div class="absolute top-4 right-4 z-20">
       <div class="relative">
         <button @click="langDropdownOpen = !langDropdownOpen" class="p-2 rounded-md bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-colors duration-200 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM2 10a8 8 0 1116 0 8 8 0 01-16 0z" /><path d="M12.395 7.553a1 1 0 00-1.45-.385l-2.5 1.5a1 1 0 000 1.664l2.5 1.5a1 1 0 001.45-.385V7.553z" /></svg>
+          <Icon name="heroicons:language" class="h-5 w-5" />
           <span class="ml-2 text-sm font-medium">{{ currentLocale?.name }}</span>
           <svg class="w-4 h-4 ml-1 transition-transform" :class="{'rotate-180': langDropdownOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
         </button>

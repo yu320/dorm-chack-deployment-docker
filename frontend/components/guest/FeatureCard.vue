@@ -1,9 +1,9 @@
 <template>
   <div class="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300">
-    <div :class="`w-12 h-12 ${colorClasses} rounded-xl flex items-center justify-center mb-4`">
+    <div :class="`w-12 h-12 ${colorClasses} rounded-xl flex items-center justify-center mb-4 mx-auto`">
       <Icon :name="icon" class="h-6 w-6" />
     </div>
-    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ title }}</h3>
+    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 text-center">{{ title }}</h3>
     <p class="text-gray-600 dark:text-gray-400">{{ description }}</p>
   </div>
 </template>

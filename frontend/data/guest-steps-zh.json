@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "color": "primary",
+    "title": "登入",
+    "description": "安全存取您的學生帳戶。"
+  },
+  {
+    "id": 2,
+    "color": "purple",
+    "title": "檢查",
+    "description": "完成數位房間檢查表。"
+  },
+  {
+    "id": 3,
+    "color": "green",
+    "title": "提交",
+    "description": "獲得即時確認與更新。"
+  }
+]

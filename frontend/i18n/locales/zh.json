@@ -3,6 +3,25 @@
   "welcomeMessage": "管理宿舍檢查的最簡單方法。",
   "getStarted": "開始使用",
   "close": "關閉",
+  "guest": {
+    "howItWorks": "運作方式",
+    "step1Title": "登入",
+    "step1Desc": "安全存取您的學生帳戶。",
+    "step2Title": "檢查",
+    "step2Desc": "完成數位房間檢查表。",
+    "step3Title": "提交",
+    "step3Desc": "獲得即時確認與更新。",
+    "features": {
+      "easyInspectionTitle": "輕鬆檢查",
+      "easyInspectionDesc": "透過我們直觀的數位檢查表，在幾分鐘內完成房間檢查。",
+      "digitalRecordsTitle": "數位紀錄",
+      "digitalRecordsDesc": "安全地追蹤您所有的過去檢查和房間狀況。",
+      "instantUpdatesTitle": "即時更新",
+      "instantUpdatesDesc": "接收關於您檢查狀態的即時通知。",
+      "securityTitle": "安全防護",
+      "securityDesc": "嚴格的數據加密與權限控管，保障您的隱私安全。"
+    }
+  },
   "index": {
     "myDashboard": {
       "title": "我的儀表板"

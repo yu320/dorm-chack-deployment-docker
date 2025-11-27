@@ -1,0 +1,30 @@
+[
+  {
+    "id": "easyInspection",
+    "icon": "heroicons:clipboard-document-check",
+    "color": "green",
+    "title": "輕鬆檢查",
+    "description": "透過我們直觀的數位檢查表，在幾分鐘內完成房間檢查。"
+  },
+  {
+    "id": "digitalRecords",
+    "icon": "heroicons:archive-box",
+    "color": "blue",
+    "title": "數位紀錄",
+    "description": "安全地追蹤您所有的過去檢查和房間狀況。"
+  },
+  {
+    "id": "instantUpdates",
+    "icon": "heroicons:bell-alert",
+    "color": "purple",
+    "title": "即時更新",
+    "description": "接收關於您檢查狀態的即時通知。"
+  },
+  {
+    "id": "securityProtection",
+    "icon": "heroicons:shield-check",
+    "color": "red",
+    "title": "安全防護",
+    "description": "嚴格的數據加密與權限控管，保障您的隱私安全。"
+  }
+]

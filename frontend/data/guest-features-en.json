@@ -1,0 +1,30 @@
+[
+  {
+    "id": "easyInspection",
+    "icon": "heroicons:clipboard-document-check",
+    "color": "green",
+    "title": "Easy Inspection",
+    "description": "Complete your room inspection in minutes with our intuitive digital checklist."
+  },
+  {
+    "id": "digitalRecords",
+    "icon": "heroicons:archive-box",
+    "color": "blue",
+    "title": "Digital Records",
+    "description": "Keep track of all your past inspections and room conditions securely."
+  },
+  {
+    "id": "instantUpdates",
+    "icon": "heroicons:bell-alert",
+    "color": "purple",
+    "title": "Instant Updates",
+    "description": "Receive real-time notifications about your inspection status."
+  },
+  {
+    "id": "securityProtection",
+    "icon": "heroicons:shield-check",
+    "color": "red",
+    "title": "Security Protection",
+    "description": "Strict data encryption and access control to ensure your privacy and security."
+  }
+]

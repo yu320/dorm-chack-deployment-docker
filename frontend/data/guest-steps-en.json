@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "color": "primary",
+    "title": "Login",
+    "description": "Access your student account securely."
+  },
+  {
+    "id": 2,
+    "color": "purple",
+    "title": "Inspect",
+    "description": "Complete the digital room checklist."
+  },
+  {
+    "id": 3,
+    "color": "green",
+    "title": "Submit",
+    "description": "Get instant confirmation and updates."
+  }
+]

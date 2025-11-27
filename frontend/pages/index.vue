@@ -33,16 +33,20 @@
 import { computed } from 'vue';
 import { useAuth } from '~/composables/useAuth';
 import { useHomeData } from '~/composables/useHomeData';
+import { useI18n } from '#imports';
 
 // Composables
 const { isAuthenticated, hasPermission, user } = useAuth();
 const { data: dashboardData, pending } = useHomeData();
+const { t } = useI18n();
 
 // Computed Roles
 const isAdmin = computed(() => hasPermission('admin:full_access'));
 
 // Head Management (SEO)
 useHead({
-  title: computed(() => isAuthenticated.value ? 'Home - DormManager' : 'Welcome - DormManager')
+  title: computed(() => isAuthenticated.value 
+    ? `${t('navigation.home')} - ${t('header.title')}` 
+    : `${t('header.welcome')} - ${t('header.title')}`)
 });
 </script>

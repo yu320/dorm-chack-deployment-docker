@@ -3,6 +3,25 @@
   "welcomeMessage": "The easiest way to manage dormitory inspections.",
   "getStarted": "Get Started",
   "close": "Close",
+  "guest": {
+    "howItWorks": "How it Works",
+    "step1Title": "Login",
+    "step1Desc": "Access your student account securely.",
+    "step2Title": "Inspect",
+    "step2Desc": "Complete the digital room checklist.",
+    "step3Title": "Submit",
+    "step3Desc": "Get instant confirmation and updates.",
+    "features": {
+      "easyInspectionTitle": "Easy Inspection",
+      "easyInspectionDesc": "Complete your room inspection in minutes with our intuitive digital checklist.",
+      "digitalRecordsTitle": "Digital Records",
+      "digitalRecordsDesc": "Keep track of all your past inspections and room conditions securely.",
+      "instantUpdatesTitle": "Instant Updates",
+      "instantUpdatesDesc": "Receive real-time notifications about your inspection status.",
+      "securityTitle": "Security Protection",
+      "securityDesc": "Strict data encryption and access control to ensure your privacy and security."
+    }
+  },
   "index": {
     "dashboard": {
       "overview": "Overview",
@@ -91,7 +110,9 @@
     "status": "Status",
     "date": "Date",
     "passed": "Passed",
-    "failed": "Failed"
+    "failed": "Failed",
+    "passRate": "Inspection Pass Rate",
+    "topDamageTypes": "Top Damage Types"
   },
   "inspection": {
     "newTitle": "Dormitory Room Inspection",

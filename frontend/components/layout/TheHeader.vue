@@ -121,9 +121,7 @@ const handleLogout = async () => {
               <!-- Language Switcher -->
               <div class="relative min-w-0">
                 <button ref="langToggleRef" @click="toggleLangDropdown" class="p-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-6h5.25M7.5 8.25V5.25m0 0h3.75m-3.75 0l-1.5-1.5M7.5 5.25v3.75m4.5-4.5v4.5m-4.5-4.5h4.5m-4.5 0l-1.5-1.5M12 12.75l-3-3m3 3l3-3m-3 3v3.75m-9-6h5.25M7.5 8.25V5.25m0 0h3.75m-3.75 0l-1.5-1.5M7.5 5.25v3.75m4.5-4.5v4.5m-4.5-4.5h4.5m-4.5 0l-1.5-1.5M12 12.75l-3-3m3 3l3-3m-3 3v3.75" />
-                  </svg>
+                  <Icon name="heroicons:language" class="h-5 w-5" />
                   <span class="ml-2 text-sm font-medium hidden sm:inline">{{ currentLocale?.name }}</span>
                   <svg class="w-4 h-4 ml-1 transition-transform" :class="{'rotate-180': isLangOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
