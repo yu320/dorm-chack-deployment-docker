@@ -10,50 +10,8 @@
       </div>
     </div>
 
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <CommonStatCard :label="$t('dashboard.totalStudents')" :value="stats.total_students" icon="heroicons:users" color="blue" />
-      <CommonStatCard :label="$t('dashboard.totalRooms')" :value="stats.total_rooms" icon="heroicons:key" color="indigo" />
-      <CommonStatCard :label="$t('dashboard.inspectionsToday')" :value="stats.inspections_today" icon="heroicons:clipboard" color="green" />
-      <CommonStatCard :label="$t('dashboard.issuesFound')" :value="stats.issues_found" icon="heroicons:exclamation-circle" color="red" />
-    </div>
-
-    <!-- Charts Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-        <h3 class="text-lg font-bold mb-6">Inspection Pass Rate</h3>
-        <div class="h-64 flex items-center justify-center">
-           <ChartsPassRatePieChart v-if="passRateData.labels.length" :chartData="passRateData" />
-           <p v-else class="text-gray-500">No data available</p>
-        </div>
-      </div>
-      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-        <h3 class="text-lg font-bold mb-6">Top Damage Types</h3>
-        <div class="h-64 flex items-center justify-center">
-           <ChartsDamageRankingBarChart v-if="damageRankingData.labels.length" :chartData="damageRankingData" />
-           <p v-else class="text-gray-500">No data available</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- Recent Inspections Table -->
-      <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-        <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-          <h3 class="text-lg font-bold">{{ $t('dashboard.recentInspections') }}</h3>
-          <NuxtLink :to="localePath('/admin/inspections')" class="text-primary-600 hover:text-primary-700 text-sm font-medium">
-            {{ $t('dashboard.viewAll') }}
-          </NuxtLink>
-        </div>
-        <AdminInspectionTable :data="stats.recent_inspections" />
-      </div>
-
-      <!-- Quick Actions List -->
-      <AdminQuickActions />
-    </div>
-
     <!-- Latest Announcements Section -->
-    <div class="mt-8">
+    <div>
       <div class="flex justify-between items-center mb-6">
         <h3 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center">
           <Icon name="heroicons:megaphone" class="mr-3 text-primary-600" />
@@ -79,12 +37,56 @@
           :key="announcement.id"
           :id="announcement.id"
           :title="announcement.title"
+          :title-en="announcement.title_en"
           :date="new Date(announcement.created_at).toLocaleDateString('zh-TW')"
           :tag="announcement.tag"
           :tag-type="announcement.tag_type"
           :content="announcement.content"
+          :content-en="announcement.content_en"
         />
       </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <CommonStatCard :label="$t('dashboard.totalStudents')" :value="stats.total_students" icon="heroicons:users" color="blue" />
+      <CommonStatCard :label="$t('dashboard.totalRooms')" :value="stats.total_rooms" icon="heroicons:key" color="indigo" />
+      <CommonStatCard :label="$t('dashboard.inspectionsToday')" :value="stats.inspections_today" icon="heroicons:clipboard" color="green" />
+      <CommonStatCard :label="$t('dashboard.issuesFound')" :value="stats.issues_found" icon="heroicons:exclamation-circle" color="red" />
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <h3 class="text-lg font-bold mb-6">{{ $t('dashboard.passRate') }}</h3>
+        <div class="h-64 flex items-center justify-center">
+           <ChartsPassRatePieChart v-if="passRateData.labels.length" :chartData="passRateData" />
+           <p v-else class="text-gray-500">No data available</p>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <h3 class="text-lg font-bold mb-6">{{ $t('dashboard.topDamageTypes') }}</h3>
+        <div class="h-64 flex items-center justify-center">
+           <ChartsDamageRankingBarChart v-if="damageRankingData.labels.length" :chartData="damageRankingData" />
+           <p v-else class="text-gray-500">No data available</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Recent Inspections Table -->
+      <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+          <h3 class="text-lg font-bold">{{ $t('dashboard.recentInspections') }}</h3>
+          <NuxtLink :to="localePath('/admin/inspections')" class="text-primary-600 hover:text-primary-700 text-sm font-medium">
+            {{ $t('dashboard.viewAll') }}
+          </NuxtLink>
+        </div>
+        <AdminInspectionTable :data="stats.recent_inspections" />
+      </div>
+
+      <!-- Quick Actions List -->
+      <AdminQuickActions />
     </div>
   </div>
 </template>
@@ -132,7 +134,7 @@ const passRateData = computed(() => {
     labels,
     datasets: [
       {
-        backgroundColor: ['#10B981', '#EF4444', '#F59E0B'],
+        backgroundColor: ['#34D399', '#F87171', '#FBBF24'],
         data
       }
     ]
@@ -150,7 +152,7 @@ const damageRankingData = computed(() => {
     datasets: [
       {
         label: 'Damage Count',
-        backgroundColor: '#6366F1',
+        backgroundColor: '#818CF8',
         data
       }
     ]

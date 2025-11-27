@@ -7,18 +7,18 @@
     <div v-else class="container mx-auto px-4 py-8">
       
       <!-- Loading Skeleton -->
-      <CommonDashboardSkeleton v-if="pending" />
+      <CommonHomeSkeleton v-if="pending" />
 
       <!-- Role-Based Content -->
       <template v-else>
-        <!-- Admin Dashboard -->
-        <AdminDashboard 
+        <!-- Admin Home -->
+        <AdminHome 
           v-if="isAdmin" 
           :stats="dashboardData"
         />
 
-        <!-- Student Dashboard -->
-        <StudentDashboard 
+        <!-- Student Home -->
+        <StudentHome 
           v-else 
           :user="user" 
           :latest-inspection="dashboardData?.latestInspection"
@@ -32,17 +32,17 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useAuth } from '~/composables/useAuth';
-import { useDashboardData } from '~/composables/useDashboardData';
+import { useHomeData } from '~/composables/useHomeData';
 
 // Composables
 const { isAuthenticated, hasPermission, user } = useAuth();
-const { data: dashboardData, pending } = useDashboardData();
+const { data: dashboardData, pending } = useHomeData();
 
 // Computed Roles
 const isAdmin = computed(() => hasPermission('admin:full_access'));
 
 // Head Management (SEO)
 useHead({
-  title: computed(() => isAuthenticated.value ? 'Dashboard - DormManager' : 'Welcome - DormManager')
+  title: computed(() => isAuthenticated.value ? 'Home - DormManager' : 'Welcome - DormManager')
 });
 </script>

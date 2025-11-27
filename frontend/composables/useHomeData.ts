@@ -2,7 +2,7 @@
  * Composable for fetching dashboard data based on user role.
  * Encapsulates the API logic to keep the view clean.
  */
-export const useDashboardData = () => {
+export const useHomeData = () => {
   const { isAuthenticated, hasPermission, apiFetch } = useAuth();
 
   const isAdmin = computed(() => hasPermission('admin:full_access'));

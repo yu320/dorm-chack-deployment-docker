@@ -1,12 +1,40 @@
 <template>
   <div class="space-y-8">
     <!-- Personalized Greeting -->
-    <div class="bg-gradient-to-r from-primary-600 to-purple-600 rounded-2xl p-8 text-white shadow-lg">
+    <div class="bg-primary-600 rounded-2xl p-8 text-white shadow-lg">
       <h2 class="text-3xl font-bold mb-2 flex items-center">
         <Icon name="heroicons:sparkles" class="mr-3 text-yellow-300" />
         {{ $t('welcome') }}, {{ user?.username || 'Student' }}!
       </h2>
       <p class="text-white/90 text-lg">Here's what's happening with your dormitory today.</p>
+    </div>
+
+    <!-- Latest Announcements Section -->
+    <div>
+      <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
+        <Icon name="heroicons:megaphone" class="mr-3 text-primary-600" />
+        最新公告
+      </h3>
+      <div v-if="loadingAnnouncements" class="text-center py-8">
+        <p class="text-gray-500 dark:text-gray-400">載入中...</p>
+      </div>
+      <div v-else-if="announcements.length === 0" class="text-center py-8">
+        <p class="text-gray-500 dark:text-gray-400">目前沒有公告</p>
+      </div>
+      <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <CommonAnnouncementCard
+          v-for="announcement in announcements"
+          :key="announcement.id"
+          :id="announcement.id"
+          :title="announcement.title"
+          :title-en="announcement.title_en"
+          :date="new Date(announcement.created_at).toLocaleDateString('zh-TW')"
+          :tag="announcement.tag"
+          :tag-type="announcement.tag_type"
+          :content="announcement.content"
+          :content-en="announcement.content_en"
+        />
+      </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -67,32 +95,6 @@
         </div>
       </div>
       
-    </div>
-
-    <!-- Latest Announcements Section -->
-    <div class="mt-8">
-      <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
-        <Icon name="heroicons:megaphone" class="mr-3 text-primary-600" />
-        最新公告
-      </h3>
-      <div v-if="loadingAnnouncements" class="text-center py-8">
-        <p class="text-gray-500 dark:text-gray-400">載入中...</p>
-      </div>
-      <div v-else-if="announcements.length === 0" class="text-center py-8">
-        <p class="text-gray-500 dark:text-gray-400">目前沒有公告</p>
-      </div>
-      <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <CommonAnnouncementCard
-          v-for="announcement in announcements"
-          :key="announcement.id"
-          :id="announcement.id"
-          :title="announcement.title"
-          :date="new Date(announcement.created_at).toLocaleDateString('zh-TW')"
-          :tag="announcement.tag"
-          :tag-type="announcement.tag_type"
-          :content="announcement.content"
-        />
-      </div>
     </div>
   </div>
 </template>

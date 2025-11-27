@@ -10,7 +10,7 @@
           <Icon name="heroicons:home-modern" class="h-20 w-20 text-primary-600 dark:text-primary-400" />
         </div>
 
-        <h1 class="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-purple-600 to-primary-600 dark:from-primary-400 dark:via-purple-400 dark:to-primary-400 mb-6 animate-gradient-x">
+        <h1 class="text-6xl md:text-8xl font-black text-gray-900 dark:text-white mb-6">
           {{ $t('welcome') }}
         </h1>
         
@@ -26,6 +26,34 @@
             </span>
             <div class="absolute inset-0 bg-gradient-to-r from-primary-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </NuxtLink>
+        </div>
+      </div>
+
+      <!-- Latest Announcements Section -->
+      <div class="text-left mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+          <Icon name="heroicons:megaphone" class="mr-3 text-primary-600" />
+          最新公告
+        </h2>
+        <div v-if="loading" class="text-center py-8">
+          <p class="text-gray-500 dark:text-gray-400">載入中...</p>
+        </div>
+        <div v-else-if="announcements.length === 0" class="text-center py-8">
+          <p class="text-gray-500 dark:text-gray-400">目前沒有公告</p>
+        </div>
+        <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <CommonAnnouncementCard
+            v-for="announcement in announcements"
+            :key="announcement.id"
+            :id="announcement.id"
+            :title="announcement.title"
+            :title-en="announcement.title_en"
+            :date="new Date(announcement.created_at).toLocaleDateString('zh-TW')"
+            :tag="announcement.tag"
+            :tag-type="announcement.tag_type"
+            :content="announcement.content"
+            :content-en="announcement.content_en"
+          />
         </div>
       </div>
 
@@ -56,29 +84,6 @@
             <h3 class="font-bold text-lg mb-2">Submit</h3>
             <p class="text-sm text-gray-500 dark:text-gray-400">Get instant confirmation and updates.</p>
           </div>
-        </div>
-      </div>
-
-      <!-- Latest Announcements Section -->
-      <div class="text-left mb-16">
-        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">最新公告</h2>
-        <div v-if="loading" class="text-center py-8">
-          <p class="text-gray-500 dark:text-gray-400">載入中...</p>
-        </div>
-        <div v-else-if="announcements.length === 0" class="text-center py-8">
-          <p class="text-gray-500 dark:text-gray-400">目前沒有公告</p>
-        </div>
-        <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <CommonAnnouncementCard
-            v-for="announcement in announcements"
-            :key="announcement.id"
-            :id="announcement.id"
-            :title="announcement.title"
-            :date="new Date(announcement.created_at).toLocaleDateString('zh-TW')"
-            :tag="announcement.tag"
-            :tag-type="announcement.tag_type"
-            :content="announcement.content"
-          />
         </div>
       </div>
 
