@@ -22,7 +22,7 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 @router.post("/token", response_model=schemas.Token)
-# @limiter.limit("5/minute")  # Temporarily disabled to debug
+@limiter.limit("5/minute")  # Temporarily disabled to debug
 async def login_for_access_token(
     request: Request,
     response: Response,

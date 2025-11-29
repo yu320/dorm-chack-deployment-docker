@@ -45,7 +45,8 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "the_user_does_not_have_the_required_permission": "The user does not have the required '{permission}' permission",
         "could_not_validate_credentials": "Could not validate credentials",
         "not_authenticated": "Not authenticated",
-        "failed_to_register_user": "Failed to register user: {detail}"
+        "failed_to_register_user": "Failed to register user: {detail}",
+        "password_too_short": "Password must be at least 8 characters long"
     },
     "zh": {
         "invalid_credentials": "使用者名稱或密碼不正確",
@@ -87,7 +88,8 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "the_user_does_not_have_the_required_permission": "使用者沒有所需的 '{permission}' 權限",
         "could_not_validate_credentials": "無法驗證憑證",
         "not_authenticated": "未驗證",
-        "failed_to_register_user": "註冊使用者失敗：{detail}"
+        "failed_to_register_user": "註冊使用者失敗：{detail}",
+        "password_too_short": "密碼長度須至少8碼"
     }
 }
 

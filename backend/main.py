@@ -16,6 +16,7 @@ from app.config import settings
 from app.limiter import limiter
 from slowapi.errors import RateLimitExceeded
 from app.core.logging import setup_logging # Import setup_logging
+from app.utils.i18n import _ # Import translation function
 
 # Configure logging
 setup_logging()
@@ -70,10 +71,27 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    errors = []
+    for error in exc.errors():
+        # Extract the raw message (which might be a translation key)
+        raw_msg = error.get("msg", "")
+        # Remove "Value error, " prefix added by Pydantic if present
+        if raw_msg.startswith("Value error, "):
+            raw_msg = raw_msg.replace("Value error, ", "")
+        
+        # Translate the message
+        translated_msg = _(raw_msg, request)
+        
+        # Reconstruct a simplified error object or just use the translated message
+        # Here we keep the structure but update the message
+        error_copy = error.copy()
+        error_copy["msg"] = translated_msg
+        errors.append(error_copy)
+
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content=schemas.ErrorResponse(
-            detail=f"Validation Error: {exc.errors()}",
+            detail=f"Validation Error: {errors}", # Use the translated errors
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         ).model_dump()
     )

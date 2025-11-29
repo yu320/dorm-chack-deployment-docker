@@ -1,5 +1,5 @@
 import uuid
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 from typing import List, Optional
 from datetime import datetime
 
@@ -157,6 +157,14 @@ class UserCreate(UserBase):
     student_id_number: str
     bed_number: Optional[str] = None
     email: EmailStr
+
+    @field_validator('password')
+    @classmethod
+    def validate_password_length(cls, v: str) -> str:
+        if len(v) < 8:
+            raise ValueError('password_too_short')
+        return v
+
 class UserUpdate(UserBase):
     username: Optional[str] = None
     is_active: Optional[bool] = None
