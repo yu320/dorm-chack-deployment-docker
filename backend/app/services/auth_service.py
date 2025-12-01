@@ -28,7 +28,7 @@ class AuthService:
         """
         驗證使用者憑證。
         """
-        user = await crud_user.get_user_by_username(self.db, username=username)
+        user = await crud_user.get_by_username(self.db, username=username)
         if not user or not verify_password(password, user.hashed_password):
             return None
         if not user.is_active:
@@ -52,19 +52,66 @@ class AuthService:
         """
         註冊新使用者。
         """
-        db_user = await crud_user.get_user_by_username(self.db, username=user_in.username)
+        db_user = await crud_user.get_by_username(self.db, username=user_in.username)
         if db_user:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already registered")
         
         assigned_roles: List[str] = []
-        # 處理使用者角色，第一個使用者為 Admin
-        first_user = await crud_user.get_users(self.db, skip=0, limit=1)
-        if first_user["total"] == 0: # Check total count, not the list itself
+        # 處理使用者角色，第一個使用者為 Admin，其餘預設為 Student
+        first_user_records = await crud_user.get_multi(self.db, skip=0, limit=1)
+        if len(first_user_records) == 0: 
             assigned_roles.append("admin") # Assign admin role to the first user
+        else:
+            assigned_roles.append("student") # Default to student for others
 
-        logger.debug(f"Calling crud_user.create_user with user_in={user_in.model_dump()}, role_names={assigned_roles}") # Debug print
-        created_user, _ = await crud_user.create_user(self.db, user_in=user_in, role_names=assigned_roles)  # Unpack tuple
-        # TODO: 發送驗證信
+        created_user = await crud_user.create(self.db, obj_in=user_in, role_names=assigned_roles)  
+        
+        # 發送驗證信
+        if hasattr(created_user, "verification_token") and created_user.verification_token:
+            # Import inside method to avoid circular dependency
+            from .notification_service import notification_service
+            
+            verification_link = f"{settings.API_BASE_URL}/verify-email?token={created_user.verification_token}"
+            
+            # Generate link (assuming frontend handles /verify-email?token=...)
+            # Wait, verification link structure needs to match frontend route. 
+            # If frontend is Nuxt, it might be something like /verify?token=...
+            # Or is it an API link that redirects?
+            # The prompt implies "Click link to register success". Usually this means frontend page.
+            # Let's assume frontend has a page /verify-email that takes the token.
+            # However, the current `auth.py` endpoint is GET /verify-email/{token} returning JSON.
+            # If the user clicks this directly, they get a JSON response "Email verified successfully".
+            # That's fine for an API-centric approach, but better if it redirects to a login page.
+            # For now, I will point to the Frontend URL if possible, or the API URL if strictly backend task.
+            # The `password-recovery` uses `settings.API_BASE_URL/reset-password?token=...`.
+            # Let's assume `settings.API_BASE_URL` points to the Frontend (or API?). 
+            # In `auth.py`: `reset_link = f"{settings.API_BASE_URL}/reset-password?token={reset_token}" # Frontend URL`
+            # So I should use the same pattern.
+            
+            # Note: verify-email endpoint in auth.py is `@router.get("/verify-email/{token}")`. 
+            # This is an API endpoint. If I send this link, the browser opens JSON.
+            # If I want a frontend page, I should send e.g. `http://frontend/verify-email?token=...`
+            # and that page calls the API.
+            # Given the `password-recovery` logic in `auth.py` uses `reset-password?token=...` as a Frontend URL,
+            # I should probably use a Frontend URL for verification too.
+            # Let's use `/verify-email?token=` and ensure the frontend handles it.
+            # Wait, I am only modifying backend now? 
+            # The user asked for "Click link to register success".
+            # I will stick to the pattern used in password reset.
+            
+            verification_link = f"{settings.API_BASE_URL}/verify-email?token={created_user.verification_token}"
+
+            # Determine language (default to en or infer from context if possible, but here we have no request context easily)
+            # We could pass language in UserCreate? No. Default to 'zh' for this project context? 
+            # Or just 'en'. Let's default to 'zh' given the context files are largely Chinese oriented.
+            lang = "zh" 
+
+            await notification_service.send_verification_email(
+                to_email=created_user.email, 
+                username=created_user.username, 
+                verification_link=verification_link,
+                lang=lang
+            )
 
         return created_user
 
@@ -85,7 +132,7 @@ class AuthService:
             token_data = schemas.TokenData(username=username)
         except JWTError:
             raise credentials_exception
-        user = await crud_user.get_user_by_username(self.db, username=token_data.username)
+        user = await crud_user.get_by_username(self.db, username=token_data.username)
         if user is None:
             raise credentials_exception
         return user

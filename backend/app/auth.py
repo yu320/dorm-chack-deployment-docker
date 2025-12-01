@@ -49,9 +49,20 @@ async def get_current_active_user(
 
 
 
+from typing import Optional, Union, List
+
+# ... (imports remain same)
+
 class PermissionChecker:
-    def __init__(self, required_permission: str):
-        self.required_permission = required_permission
+    def __init__(self, required_permissions: Union[str, List[str]], logic: str = "AND"):
+        """
+        :param required_permissions: A single permission string or a list of permission strings.
+        :param logic: 'AND' (user must have all) or 'OR' (user must have at least one). Defaults to 'AND'.
+        """
+        self.required_permissions = [required_permissions] if isinstance(required_permissions, str) else required_permissions
+        self.logic = logic.upper()
+        if self.logic not in ["AND", "OR"]:
+             raise ValueError("Permission logic must be 'AND' or 'OR'")
 
     def __call__(self, current_user: models.User = Depends(get_current_active_user)):
         user_permissions = crud_user.get_user_permissions(current_user)
@@ -60,9 +71,16 @@ class PermissionChecker:
         if "admin:full_access" in user_permissions:
             return current_user
             
-        if self.required_permission not in user_permissions:
+        has_permission = False
+        if self.logic == "OR":
+            has_permission = any(perm in user_permissions for perm in self.required_permissions)
+        else: # AND
+            has_permission = all(perm in user_permissions for perm in self.required_permissions)
+
+        if not has_permission:
+            perms_str = ", ".join(self.required_permissions)
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"The user does not have the required '{self.required_permission}' permission",
+                detail=f"The user does not have the required permissions ({self.logic}): {perms_str}",
             )
         return current_user

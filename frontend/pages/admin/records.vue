@@ -9,120 +9,222 @@
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
       <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">{{ $t('admin.filters') }}</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <input type="text" v-model="studentNameFilter" :placeholder="$t('admin.filterByStudent')" class="input-field">
-        <input type="text" v-model="roomNumberFilter" :placeholder="$t('admin.filterByRoom')" class="input-field">
-        <select v-model="statusFilter" class="input-field">
+        <input type="text" v-model="filters.student_name" :placeholder="$t('admin.filterByStudent')" class="input-field">
+        <input type="text" v-model="filters.room_number" :placeholder="$t('admin.filterByRoom')" class="input-field">
+        <select v-model="filters.status" class="input-field">
           <option value="">{{ $t('admin.allStatuses') }}</option>
           <option v-for="status in availableStatuses" :key="status" :value="status">{{ status }}</option>
         </select>
-        <input type="date" v-model="startDateFilter" class="input-field">
-        <input type="date" v-model="endDateFilter" class="input-field">
+        <input type="date" v-model="filters.start_date" class="input-field">
+        <input type="date" v-model="filters.end_date" class="input-field">
       </div>
-      <div class="flex justify-end mt-4">
-        <button @click="fetchRecords" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
-          {{ $t('admin.filter') }}
-        </button>
-      </div>
+        <div class="mt-4 flex justify-between items-center">
+            <!-- Batch Actions -->
+            <div v-if="selectedRecords.length > 0" class="flex items-center space-x-2">
+                <span class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ $t('common.selected', { count: selectedRecords.length }) }}
+                </span>
+                <button 
+                    v-permission="'inspections:delete'"
+                    @click="handleBatchDelete" 
+                    class="btn-danger text-sm py-1 px-3"
+                >
+                    {{ $t('admin.deleteSelected') }}
+                </button>
+            </div>
+            <div v-else></div> <!-- Spacer -->
+
+            <button @click="handleSearch" class="btn-primary">
+                {{ $t('common.search') }}
+            </button>
+        </div>
     </div>
 
-    <!-- Records Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-700">
-            <tr>
-              <th v-for="header in headers" :key="header.key" scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ $t(header.title) }}</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            <tr v-if="loading">
-              <td :colspan="headers.length" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">{{ $t('loading') }}</td>
-            </tr>
-            <tr v-else-if="records.length === 0">
-              <td :colspan="headers.length" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">{{ $t('admin.noRecordsFound') }}</td>
-            </tr>
-            <tr v-for="record in records" :key="record.id" @click="viewRecord(record.id)" class="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ record.id }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ record.student?.full_name }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ record.room.room_number }}</td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span 
-                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-                  :class="{
-                    'bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-300': record.status === 'approved',
-                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-300': record.status === 'submitted',
-                    'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300': record.status === 'pending',
-                  }"
-                >
-                  {{ record.status }}
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ new Date(record.created_at).toLocaleString() }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <!-- Data Table -->
+    <DataTable
+      :columns="tableColumns"
+      :data="records"
+      :loading="isLoading"
+      :current-page="currentPage"
+      :total-pages="totalPages"
+      :selectable="true"
+      v-model="selectedRecords"
+      @page-change="changePage"
+    >
+        <template #status="{ item }">
+            <span 
+                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                :class="{
+                'bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-300': item.status === 'approved',
+                'bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-300': item.status === 'submitted',
+                'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300': item.status === 'pending',
+                }"
+            >
+                {{ item.status }}
+            </span>
+        </template>
+        <template #created_at="{ item }">
+            {{ new Date(item.created_at).toLocaleString() }}
+        </template>
+        <template #actions="{ item }">
+            <button @click="viewRecord(item.id)" class="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300 font-medium mr-3">
+                {{ $t('admin.view') }}
+            </button>
+            <button v-permission="'inspections:delete'" @click="handleDelete(item.id)" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 font-medium">
+                {{ $t('admin.delete') }}
+            </button>
+        </template>
+    </DataTable>
+
+    <!-- Delete Confirmation Modal -->
+    <Modal
+      :is-open="isDeleteModalOpen"
+      :title="$t('admin.confirmDelete')"
+      :show-confirm="true"
+      :confirm-text="$t('admin.delete')"
+      :close-text="$t('common.cancel')"
+      @close="closeDeleteModal"
+      @confirm="confirmDelete"
+    >
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        {{ $t('admin.deleteRecordConfirmation') }}
+      </p>
+    </Modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuth } from '~/composables/useAuth'
 import { useI18n } from 'vue-i18n'
 import { useSnackbar } from '~/composables/useSnackbar'
+import { useInspections } from '~/composables/useInspections'
+import { useAuth } from '~/composables/useAuth'
+import DataTable from '~/components/common/DataTable.vue'
+import Modal from '~/components/common/Modal.vue'
+import type { InspectionRecord, PaginatedResponse } from '~/types'
 
 definePageMeta({
   permission: 'view_all_records'
 })
 
-
-
 const { t } = useI18n()
-const { apiFetch } = useAuth()
+const { apiFetch, hasPermission } = useAuth() // Add hasPermission
 const { showSnackbar } = useSnackbar()
+const { searchInspections, deleteInspection, isLoading } = useInspections() // Add deleteInspection
 const router = useRouter()
 
-const loading = ref(true)
-const records = ref<any[]>([])
-const headers = [
-  { title: 'admin.recordId', key: 'id' },
-  { title: 'admin.student', key: 'student.full_name' },
-  { title: 'admin.room', key: 'room.room_number' },
-  { title: 'admin.status', key: 'status' },
-  { title: 'admin.dateSubmitted', key: 'created_at' },
-]
-
-const studentNameFilter = ref('')
-const roomNumberFilter = ref('')
-const statusFilter = ref('')
-const startDateFilter = ref('')
-const endDateFilter = ref('')
+const records = ref<InspectionRecord[]>([])
 const availableStatuses = ['pending', 'submitted', 'approved']
 
+// Filters
+const filters = ref({
+    student_name: '',
+    room_number: '',
+    status: '',
+    start_date: '',
+    end_date: ''
+})
+
+// Pagination
+const currentPage = ref(1)
+const totalRecords = ref(0)
+const recordsPerPage = 10
+const totalPages = computed(() => Math.ceil(totalRecords.value / recordsPerPage))
+
+// Delete Modal State
+const isDeleteModalOpen = ref(false)
+const recordToDelete = ref<string | null>(null)
+const isBatchDelete = ref(false) // Track if it's a batch delete
+const selectedRecords = ref<string[]>([]) // Track selected record IDs
+
+// Table Columns
+const tableColumns = [
+  { key: 'id', label: t('admin.recordId'), class: 'text-left' },
+  { key: 'student', label: t('admin.student'), class: 'text-left' },
+  { key: 'room', label: t('admin.room'), class: 'text-left' },
+  { key: 'status', label: t('admin.status'), class: 'text-left' },
+  { key: 'created_at', label: t('admin.dateSubmitted'), class: 'text-left' },
+]
+
 const fetchRecords = async () => {
-  loading.value = true
   try {
-    const params = new URLSearchParams()
-    if (studentNameFilter.value) params.append('full_name', studentNameFilter.value)
-    if (roomNumberFilter.value) params.append('room_number', roomNumberFilter.value)
-    if (statusFilter.value) params.append('status', statusFilter.value)
-    if (startDateFilter.value) params.append('start_date', new Date(startDateFilter.value).toISOString())
-    if (endDateFilter.value) params.append('end_date', new Date(endDateFilter.value).toISOString())
+    const params = {
+        ...filters.value,
+        skip: (currentPage.value - 1) * recordsPerPage,
+        limit: recordsPerPage,
+        // Convert dates to ISO if needed
+        start_date: filters.value.start_date ? new Date(filters.value.start_date).toISOString() : undefined,
+        end_date: filters.value.end_date ? new Date(filters.value.end_date).toISOString() : undefined
+    }
     
-    const response = await apiFetch(`/api/v1/inspections/?${params.toString()}`)
-    records.value = response.records as any[]
+    const response = await searchInspections(params)
+    records.value = response.records
+    totalRecords.value = response.total
+    // Clear selection on page change or refresh if desired, but keeping it is also fine.
+    // selectedRecords.value = [] 
   } catch (e) {
-    
-    showSnackbar(t('snackbar.failedToFetchRecords'), 'error')
-  } finally {
-    loading.value = false
+    showSnackbar({ message: t('snackbar.failedToFetchRecords'), type: 'error' })
+  }
+}
+
+const handleSearch = () => {
+    currentPage.value = 1
+    fetchRecords()
+}
+
+const changePage = (page: number) => {
+  if (page > 0 && page <= totalPages.value) {
+    currentPage.value = page
+    fetchRecords()
   }
 }
 
 const viewRecord = (recordId: string) => {
-  router.push(`/records/${recordId}`)
+  router.push(`/admin/inspections/${recordId}`) // Corrected path for admin view
+}
+
+const handleDelete = (id: string) => {
+  recordToDelete.value = id
+  isBatchDelete.value = false
+  isDeleteModalOpen.value = true
+}
+
+const handleBatchDelete = () => {
+    if (selectedRecords.value.length === 0) return
+    isBatchDelete.value = true
+    isDeleteModalOpen.value = true
+}
+
+const confirmDelete = async () => {
+  try {
+    if (isBatchDelete.value) {
+        // Execute batch delete
+        // We can loop or add a batch delete API. Loop for now to reuse deleteInspection
+        // Ideally backend should support batch delete.
+        const promises = selectedRecords.value.map(id => deleteInspection(id))
+        await Promise.all(promises)
+        showSnackbar({ message: t('snackbar.recordsDeleted', { count: selectedRecords.value.length }), type: 'success' })
+        selectedRecords.value = [] // Clear selection
+    } else {
+        if (!recordToDelete.value) return
+        await deleteInspection(recordToDelete.value)
+        showSnackbar({ message: t('snackbar.recordDeleted'), type: 'success' })
+    }
+    await fetchRecords()
+  } catch (error) {
+    showSnackbar({ message: t('snackbar.failedToDeleteRecord'), type: 'error' })
+  } finally {
+    isDeleteModalOpen.value = false
+    recordToDelete.value = null
+    isBatchDelete.value = false
+  }
+}
+
+const closeDeleteModal = () => {
+  isDeleteModalOpen.value = false
+  recordToDelete.value = null
+  isBatchDelete.value = false
 }
 
 onMounted(fetchRecords)

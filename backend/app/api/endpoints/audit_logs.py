@@ -7,7 +7,7 @@ from ... import crud, schemas, auth, models
 
 router = APIRouter()
 
-@router.get("/", response_model=List[schemas.AuditLog])
+@router.get("/", response_model=schemas.PaginatedAuditLogs)
 async def read_audit_logs(
     skip: int = 0,
     limit: int = 100,
@@ -42,4 +42,19 @@ async def read_audit_logs(
         start_date=start_date,
         end_date=end_date
     )
-    return logs
+    
+    # Basic count implementation if not available in CRUD yet
+    # Ideally we should add get_count to CRUD, but for now let's fetch all count or just return len(logs) if pagination isn't strict?
+    # No, we need total for pagination.
+    # Let's assume crud_audit.get_count exists or we need to implement it. 
+    # I'll check crud_audit.py first.
+    total = await crud.crud_audit.get_count(
+        db,
+        action=action,
+        resource_type=resource_type,
+        user_id=user_uuid,
+        start_date=start_date,
+        end_date=end_date
+    )
+
+    return {"total": total, "records": logs}

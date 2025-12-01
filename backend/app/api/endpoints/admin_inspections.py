@@ -3,7 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Union, Optional
 import uuid
 
-from ... import crud, schemas, auth, models
+from ... import schemas, auth, models
+from ...crud.crud_inspection import crud_inspection # Import crud_inspection
+from ...crud.crud_student import crud_student # Import crud_student
+from ...crud.crud_room import crud_room # Import crud_room
 
 router = APIRouter()
 
@@ -13,7 +16,7 @@ class AdminInspectionCreateRequest(schemas.BaseModel):
     details: List[schemas.InspectionDetailCreate]
     signature: Optional[str] = None
 
-@router.post("/", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth.PermissionChecker("create_admin_inspection"))])
+@router.post("/", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth.PermissionChecker("inspections:submit_any"))])
 async def create_admin_inspection(
     request: AdminInspectionCreateRequest,
     db: AsyncSession = Depends(auth.get_db),
@@ -28,7 +31,8 @@ async def create_admin_inspection(
     if request.target_type == "student":
         if not isinstance(request.target_id, str):
             raise HTTPException(status_code=400, detail="Student ID must be a string (UUID)")
-        student = await crud.get_student(db, student_id=uuid.UUID(request.target_id))
+        # Use crud_student instance
+        student = await crud_student.get(db, id=uuid.UUID(request.target_id))
         if not student:
             raise HTTPException(status_code=404, detail="Student not found")
         students_to_inspect.append(student)
@@ -36,13 +40,18 @@ async def create_admin_inspection(
     elif request.target_type == "room":
         if not isinstance(request.target_id, int):
             raise HTTPException(status_code=400, detail="Room ID must be an integer")
-        students_in_room = await crud.get_students_by_room(db, room_id=request.target_id)
+        # Using crud_student.get_multi_filtered to find students in room
+        # Note: crud_student.get_multi_filtered returns dict {"total": x, "records": [...]}, we need list
+        result = await crud_student.get_multi_filtered(db, room_id=request.target_id, limit=1000)
+        students_in_room = result['records']
         students_to_inspect.extend(students_in_room)
 
     elif request.target_type == "household":
         if not isinstance(request.target_id, str):
             raise HTTPException(status_code=400, detail="Household name must be a string")
-        students_in_household = await crud.get_students_by_household(db, household=request.target_id)
+        # Using crud_student.get_multi_filtered to find students in household
+        result = await crud_student.get_multi_filtered(db, household=request.target_id, limit=1000)
+        students_in_household = result['records']
         students_to_inspect.extend(students_in_household)
         
     else:
@@ -51,7 +60,7 @@ async def create_admin_inspection(
     if not students_to_inspect:
         error_detail = "No students found for the given target"
         if request.target_type == "room" and isinstance(request.target_id, int):
-            room = await crud.get_room(db, room_id=request.target_id)
+            room = await crud_room.get(db, id=request.target_id)
             if room:
                 error_detail = f"No students found in room '{room.room_number}'"
         elif request.target_type == "household":
@@ -60,24 +69,30 @@ async def create_admin_inspection(
         raise HTTPException(status_code=404, detail=error_detail)
 
     # Create inspection records for all found students
-    created_records = []
+    inspection_data_list = []
+    
     for student in students_to_inspect:
         if not student.bed or not student.bed.room:
             continue
 
-        record_in = schemas.InspectionRecordCreate(
-            details=request.details,
-            signature=request.signature
+        # Prepare InspectionCreate object for this student
+        record_in = schemas.InspectionCreate(
+            student_id=student.id, # Must set student_id
+            room_id=student.bed.room.id, # Must set room_id
+            details=request.details, # Shared details
+            signature_base64=request.signature # Shared signature (base64)
         )
-        record = await crud.create_inspection_record(
-            db=db,
-            record=record_in,
-            student_id=student.id,
-            room_id=student.bed.room.id
-        )
-        created_records.append(record)
+        
+        inspection_data_list.append((record_in, request.signature))
 
-    if not created_records:
-        raise HTTPException(status_code=400, detail="Could not create any inspection records. Ensure students are assigned to rooms.")
+    if not inspection_data_list:
+         raise HTTPException(status_code=400, detail="Could not create any inspection records. Ensure students are assigned to rooms.")
+
+    # Batch create using crud_inspection instance
+    created_records = await crud_inspection.batch_create(
+        db=db,
+        data=inspection_data_list,
+        inspector_id=current_user.id
+    )
 
     return {"message": f"Successfully created {len(created_records)} inspection records."}

@@ -17,17 +17,59 @@ const { isAuthenticated, user, logout, hasPermission, apiFetch } = useAuth();
 const { theme, toggleTheme } = useTheme();
 const { showSnackbar } = useSnackbar();
 
-const { isOpen: isLangOpen, dropdownRef: langDropdownRef, toggleRef: langToggleRef, toggle: toggleLangDropdown, close: closeLangDropdown } = useDropdown();
-const { isOpen: isAdminOpen, dropdownRef: adminDropdownRef, toggleRef: adminToggleRef, toggle: toggleAdminDropdown, close: closeAdminDropdown } = useDropdown();
-const { isOpen: isPatrolOpen, dropdownRef: patrolDropdownRef, toggleRef: patrolToggleRef, toggle: togglePatrolDropdown, close: closePatrolDropdown } = useDropdown();
+const { isOpen: isLangOpen, dropdownRef: langDropdownRef, toggleRef: langToggleRef, open: openLangDropdown, close: closeLangDropdown, toggle: toggleLangDropdown } = useDropdown();
+const { isOpen: isAdminOpen, dropdownRef: adminDropdownRef, toggleRef: adminToggleRef, open: openAdminDropdown, close: closeAdminDropdown, toggle: toggleAdminDropdown } = useDropdown();
+const { isOpen: isPatrolOpen, dropdownRef: patrolDropdownRef, toggleRef: patrolToggleRef, open: openPatrolDropdown, close: closePatrolDropdown, toggle: togglePatrolDropdown } = useDropdown();
 
 // Admin Dropdowns
-const { isOpen: isInspOpen, dropdownRef: inspDropdownRef, toggleRef: inspToggleRef, toggle: toggleInspDropdown, close: closeInspDropdown } = useDropdown();
-const { isOpen: isDormOpen, dropdownRef: dormDropdownRef, toggleRef: dormToggleRef, toggle: toggleDormDropdown, close: closeDormDropdown } = useDropdown();
-const { isOpen: isSysOpen, dropdownRef: sysDropdownRef, toggleRef: sysToggleRef, toggle: toggleSysDropdown, close: closeSysDropdown } = useDropdown();
+const { isOpen: isInspOpen, dropdownRef: inspDropdownRef, toggleRef: inspToggleRef, open: openInspDropdown, close: closeInspDropdown, toggle: toggleInspDropdown } = useDropdown();
+const { isOpen: isDormOpen, dropdownRef: dormDropdownRef, toggleRef: dormToggleRef, open: openDormDropdown, close: closeDormDropdown, toggle: toggleDormDropdown } = useDropdown();
+const { isOpen: isSysOpen, dropdownRef: sysDropdownRef, toggleRef: sysToggleRef, open: openSysDropdown, close: closeSysDropdown, toggle: toggleSysDropdown } = useDropdown();
 
+// Array of all close functions for easy management
+const allDropdownCloseFunctions = [
+  closeLangDropdown,
+  closeAdminDropdown,
+  closePatrolDropdown,
+  closeInspDropdown,
+  closeDormDropdown,
+  closeSysDropdown,
+];
+
+const closeAllDropdowns = (exceptCloseFn?: Function) => {
+  allDropdownCloseFunctions.forEach(closeFn => {
+    if (closeFn !== exceptCloseFn) {
+      closeFn();
+    }
+  });
+};
 
 const mobileMenuOpen = ref(false);
+
+let closeDropdownTimer: ReturnType<typeof setTimeout> | null = null; // Timer for dropdown closing delay
+
+const onMouseEnter = (openFn: () => void, currentCloseFn: Function) => {
+  if (typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches) {
+    if (closeDropdownTimer) {
+      clearTimeout(closeDropdownTimer);
+      closeDropdownTimer = null;
+    }
+    closeAllDropdowns(currentCloseFn); // Close others before opening this one
+    openFn();
+  }
+};
+
+const onMouseLeave = (closeFn: () => void) => {
+  if (typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches) {
+    if (closeDropdownTimer) {
+      clearTimeout(closeDropdownTimer);
+    }
+    closeDropdownTimer = setTimeout(() => {
+      closeFn();
+      closeDropdownTimer = null;
+    }, 200); // 200ms delay before closing
+  }
+};
 
 const showChangePasswordModal = ref(false);
 const changePasswordData = reactive({
@@ -119,14 +161,14 @@ const handleLogout = async () => {
 
             <div class="flex items-center gap-3">
               <!-- Language Switcher -->
-              <div class="relative min-w-0">
-                <button ref="langToggleRef" @click="toggleLangDropdown" class="p-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 flex items-center">
+              <div class="relative min-w-0" @mouseenter="onMouseEnter(openLangDropdown, closeLangDropdown)" @mouseleave="onMouseLeave(closeLangDropdown)">
+                <button ref="langToggleRef" @click="toggleLangDropdown(); closeAllDropdowns(closeLangDropdown);" class="p-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 flex items-center">
                   <Icon name="heroicons:language" class="h-5 w-5" />
                   <span class="ml-2 text-sm font-medium hidden sm:inline">{{ currentLocale?.name }}</span>
                   <svg class="w-4 h-4 ml-1 transition-transform" :class="{'rotate-180': isLangOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <div ref="langDropdownRef" v-if="isLangOpen" class="dropdown-menu-floating" :class="{'dropdown-active': isLangOpen}">
-                  <NuxtLink v-for="l in availableLocales" :key="l.code" :to="switchLocalePath(l.code)" @click="closeLangDropdown" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <NuxtLink v-for="l in availableLocales" :key="l.code" :to="switchLocalePath(l.code)" @click="closeLangDropdown(); mobileMenuOpen = false;" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     {{ l.name }}
                   </NuxtLink>
                 </div>
@@ -179,7 +221,7 @@ const handleLogout = async () => {
     </header>
     <div v-if="isAuthenticated" class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
       <div class="container mx-auto px-4">
-        <div class="flex flex-nowrap overflow-x-auto border-b border-gray-200 dark:border-gray-700 w-full scrollbar-hide" :class="{'!flex !flex-col !overflow-visible !whitespace-normal': mobileMenuOpen}">
+        <div class="flex flex-nowrap overflow-x-auto md:overflow-visible border-b border-gray-200 dark:border-gray-700 w-full scrollbar-hide" :class="{'!flex !flex-col !overflow-visible !whitespace-normal': mobileMenuOpen}">
           <NuxtLink :to="localePath('/')" @click="mobileMenuOpen = false" class="tab-button" active-class="tab-active">{{ $t('navigation.home') }}</NuxtLink>
           
           <!-- Admin Navigation -->
@@ -188,8 +230,8 @@ const handleLogout = async () => {
             <NuxtLink :to="localePath('/admin/dashboard')" @click="mobileMenuOpen = false" class="tab-button" active-class="tab-active">{{ $t('navigation.dashboard') }}</NuxtLink>
             
             <!-- Inspection Management -->
-            <div class="relative">
-              <button ref="inspToggleRef" @click="toggleInspDropdown" class="tab-button flex items-center">
+            <div class="relative" @mouseenter="onMouseEnter(openInspDropdown, closeInspDropdown)" @mouseleave="onMouseLeave(closeInspDropdown)">
+              <button ref="inspToggleRef" @click="toggleInspDropdown(); closeAllDropdowns(closeInspDropdown);" class="tab-button flex items-center">
                 <span>{{ $t('admin.manageInspections') }}</span>
                 <svg class="w-4 h-4 ml-1 transition-transform" :class="{'rotate-180': isInspOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
               </button>
@@ -201,8 +243,8 @@ const handleLogout = async () => {
             </div>
 
             <!-- Dorm Management -->
-            <div class="relative">
-              <button ref="dormToggleRef" @click="toggleDormDropdown" class="tab-button flex items-center">
+            <div class="relative" @mouseenter="onMouseEnter(openDormDropdown, closeDormDropdown)" @mouseleave="onMouseLeave(closeDormDropdown)">
+              <button ref="dormToggleRef" @click="toggleDormDropdown(); closeAllDropdowns(closeDormDropdown);" class="tab-button flex items-center">
                 <span>{{ $t('admin.manageDorms') || 'Dorm Management' }}</span>
                 <svg class="w-4 h-4 ml-1 transition-transform" :class="{'rotate-180': isDormOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
               </button>
@@ -214,8 +256,8 @@ const handleLogout = async () => {
             </div>
 
             <!-- System Settings -->
-            <div class="relative">
-              <button ref="sysToggleRef" @click="toggleSysDropdown" class="tab-button flex items-center">
+            <div class="relative" @mouseenter="onMouseEnter(openSysDropdown, closeSysDropdown)" @mouseleave="onMouseLeave(closeSysDropdown)">
+              <button ref="sysToggleRef" @click="toggleSysDropdown(); closeAllDropdowns(closeSysDropdown);" class="tab-button flex items-center">
                 <span>{{ $t('admin.systemSettings') || 'System' }}</span>
                 <svg class="w-4 h-4 ml-1 transition-transform" :class="{'rotate-180': isSysOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
               </button>
@@ -240,8 +282,8 @@ const handleLogout = async () => {
           </template>
 
           <!-- Patrol Navigation -->
-          <div v-if="isAuthenticated" class="relative">
-            <button ref="patrolToggleRef" @click="togglePatrolDropdown" class="tab-button flex items-center" :class="{ 'tab-active': $route.path.startsWith('/patrol') }">
+          <div v-if="isAuthenticated" class="relative" @mouseenter="onMouseEnter(openPatrolDropdown, closePatrolDropdown)" @mouseleave="onMouseLeave(closePatrolDropdown)">
+            <button ref="patrolToggleRef" @click="togglePatrolDropdown(); closeAllDropdowns(closePatrolDropdown);" class="tab-button flex items-center" :class="{ 'tab-active': $route.path.startsWith('/patrol') }">
               <span>{{ $t('navigation.patrol') }}</span>
               <svg class="w-4 h-4 ml-1 transition-transform" :class="{'rotate-180': isPatrolOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </button>

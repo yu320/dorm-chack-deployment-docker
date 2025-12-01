@@ -37,13 +37,13 @@
     <!-- Charts Section -->
     <div v-if="!loading && chartData" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Inspection Status</h2>
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">{{ $t('dashboard.inspectionStatus') }}</h2>
         <div class="h-64">
           <PassRatePieChart :chart-data="pieChartData" />
         </div>
       </div>
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Top Damaged Items</h2>
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">{{ $t('dashboard.topDamagedItems') }}</h2>
         <div class="h-64">
           <DamageRankingBarChart :chart-data="barChartData" />
         </div>
@@ -164,7 +164,7 @@ const barChartData = computed(() => {
     labels,
     datasets: [
       {
-        label: 'Number of Damaged/Missing Reports',
+        label: t('dashboard.damageReportsCount'),
         backgroundColor: '#4f46e5', // Indigo
         data,
       },

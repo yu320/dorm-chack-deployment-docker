@@ -2,12 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Dict, Any
 import json
+from sqlalchemy.orm import class_mapper
 
 from ... import schemas, auth, models
-from ...crud import crud_backup, crud_user
+from ...crud import crud_backup
 
 def model_to_dict(obj):
-    return {c.name: getattr(obj, c.name) for c in obj.__table__.columns}
+    return {c.key: getattr(obj, c.key) for c in class_mapper(obj.__class__).columns}
 
 router = APIRouter()
 
@@ -29,8 +30,8 @@ async def export_data(db: AsyncSession = Depends(auth.get_db)):
     for model in export_order:
         model_name = model.__tablename__
         try:
-            records = await crud_user.get_all_records_from_model(db, model)
-            exported_data[model_name] = [model_to_dict(record) for record in records]
+            records = await crud_backup.get_all_records_from_model(db, model)
+            exported_data[model_name] = records
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to export data from {model_name}: {e}")
 

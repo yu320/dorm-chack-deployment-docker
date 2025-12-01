@@ -1,80 +1,32 @@
-from .crud_user import (
-    get_user,
-    get_user_by_email,
-    get_user_by_username,
-    create_user,
-    update_user,
-    get_user_permissions,
-    create_permission,
-    get_permission_by_name,
-    get_permissions,
-    create_role,
-    get_role_by_name,
-    get_role,
-    get_roles,
-    update_role,
-    delete_role,
-    get_all_records_from_model
-)
-from .crud_dorm import (
-    create_student,
-    get_student,
-    get_student_by_id_number,
-    get_students,
-    update_student,
-    delete_student,
-    get_room,
-    get_rooms,
-    create_room,
-    update_room,
-    delete_room,
-    get_room_by_building_and_number,
-    get_building_by_name,
-    create_building,
-    get_buildings,
-    get_building,
-    get_buildings_full_tree,
-    update_building,
-    delete_building,
-    search_students,
-    search_rooms,
-    get_students_count,
-    get_rooms_count,
-    get_bed,
-    get_student_by_bed_id,
-    assign_student_to_bed,
-    get_students_by_room,
-    get_students_by_household,
-    get_students_by_building,
-    create_patrol_location,
-    get_patrol_location,
-    get_patrol_locations_by_building,
-    update_patrol_location,
-    delete_patrol_location,
-    create_bed,
-    get_bed,
-    get_bed_by_number,
-    get_beds,
-    update_bed,
-    delete_bed,
-    get_or_create_building,
-    get_or_create_room,
-    get_or_create_bed,
-    update_or_create_student,
-    create_lights_out_patrol,
-    get_lights_out_patrols
-)
-from .crud_inspection import (
-    get_inspection_records,
-    get_inspection_record,
-    create_inspection_record,
-    update_inspection_record,
-    get_inspection_records_by_student,
-    get_active_inspection_by_student,
-    search_inspections,
-    get_inspection_items,
-    get_inspection_item,
-    create_inspection_item,
-    update_inspection_item,
-    delete_inspection_item
-)
+from .crud_user import crud_user
+from .crud_student import crud_student
+from .crud_room import crud_room
+from .crud_building import crud_building
+from .crud_bed import crud_bed
+from .crud_inspection import crud_inspection
+from .crud_announcement import crud_announcement
+from .crud_patrol_location import crud_patrol_location
+from .crud_lights_out import crud_lights_out
+from .crud_audit import audit_log_crud as crud_audit
+from .crud_backup import backup_crud as crud_backup
+from .crud_permission import permission_crud as crud_permission
+from .crud_role import role_crud as crud_role
+from .crud_item import item_crud as crud_item
+
+# Export instances for easy access
+__all__ = [
+    "crud_user",
+    "crud_student",
+    "crud_room",
+    "crud_building",
+    "crud_bed",
+    "crud_inspection",
+    "crud_announcement",
+    "crud_patrol_location",
+    "crud_lights_out",
+    "crud_audit",
+    "crud_backup",
+    "crud_permission",
+    "crud_role",
+    "crud_item"
+]

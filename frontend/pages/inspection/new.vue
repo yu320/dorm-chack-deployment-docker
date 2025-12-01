@@ -154,7 +154,7 @@ const openLightBox = (imageUrl: string) => {
 
 const getItemName = (itemId: string) => {
   const item = items.value.find(i => i.id === itemId);
-  if (!item) return 'Unknown Item';
+  if (!item) return t('inspection.unknownItem');
   if (locale.value === 'en' && item.name_en) return item.name_en;
   return item.name;
 };
@@ -237,8 +237,6 @@ const submitInspection = async () => {
     details: inspectionDetails.value,
     signature_base64: signatureData,
   };
-
-  console.log('Submitting payload:', payload); // Debug log
 
   try {
     await apiFetch('/api/v1/inspections/', {

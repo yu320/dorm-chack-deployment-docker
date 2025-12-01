@@ -1,35 +1,41 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
-import asyncio # Import asyncio
+import asyncio 
 
-from ... import auth, schemas # Import auth for dependency
-from ...crud import crud_dorm # Import crud_dorm
-# from ...schemas import SearchResultItem, GlobalSearchResults, User
-# from ...auth import get_current_active_user # Assuming only logged-in users can search
+from ... import auth, schemas 
+from ...crud.crud_student import crud_student
+from ...crud.crud_room import crud_room
+from ...crud.crud_inspection import crud_inspection
 
 router = APIRouter()
 
-@router.post("/", response_model=schemas.GlobalSearchResults, status_code=status.HTTP_200_OK)
+@router.post("/", response_model=schemas.GlobalSearchResults, status_code=status.HTTP_200_OK, dependencies=[Depends(auth.PermissionChecker("students:view_all"))])
 async def global_search(
-    search_request: schemas.GlobalSearchRequest, # Change query param to request body
-    db: AsyncSession = Depends(auth.get_db), # Use auth.get_db
-    current_user: schemas.User = Depends(auth.get_current_active_user) # Add auth dependency
+    search_request: schemas.GlobalSearchRequest, 
+    db: AsyncSession = Depends(auth.get_db), 
+    current_user: schemas.User = Depends(auth.get_current_active_user) 
 ):
     """
-    Performs a global search across different resources like students and rooms.
+    Performs a global search across different resources like students, rooms, and inspections.
     """
     query = search_request.query.strip()
-    if not query: # Allow empty query for now, client can filter
+    if not query:
         return schemas.GlobalSearchResults(results=[])
 
     # Perform searches in parallel
-    student_task = crud_dorm.search_students(db, query=query, limit=10)
-    room_task = crud_dorm.search_rooms(db, query=query, limit=10)
+    # Using the new modular CRUD instances' search method
+    student_task = crud_student.search(db, query=query, limit=5)
+    room_task = crud_room.search(db, query=query, limit=5)
+    inspection_task = crud_inspection.search(db, query=query, limit=5) # New inspection search
 
-    paginated_students, paginated_rooms = await asyncio.gather(student_task, room_task)
+    paginated_students, paginated_rooms, paginated_inspections = await asyncio.gather(
+        student_task, room_task, inspection_task
+    )
+    
     students = paginated_students.get("records", [])
     rooms = paginated_rooms.get("records", [])
+    inspections = paginated_inspections.get("records", [])
 
     search_results: List[schemas.SearchResultItem] = []
 
@@ -42,11 +48,27 @@ async def global_search(
         ))
 
     for room in rooms:
+        # Accessing relationship safely
+        building_name = room.building.name if room.building else "未知建築"
+        household_info = f", 戶號: {room.household}" if room.household else ""
+        
         search_results.append(schemas.SearchResultItem(
             type="room",
             id=str(room.id),
             title=f"寢室: {room.room_number}",
-            description=f"所屬建築: {room.building.name}, 戶號: {room.household}" if room.building and room.building.name else None
+            description=f"所屬建築: {building_name}{household_info}"
+        ))
+        
+    for inspection in inspections:
+        student_name = inspection.student.full_name if inspection.student else "未知學生"
+        room_num = inspection.room.room_number if inspection.room else "未知寢室"
+        date_str = inspection.created_at.strftime("%Y-%m-%d") if inspection.created_at else ""
+        
+        search_results.append(schemas.SearchResultItem(
+            type="inspection", # Frontend might need to handle this new type or map it
+            id=str(inspection.id),
+            title=f"檢查紀錄: {student_name} - {room_num}",
+            description=f"狀態: {inspection.status}, 日期: {date_str}"
         ))
 
     return schemas.GlobalSearchResults(results=search_results)

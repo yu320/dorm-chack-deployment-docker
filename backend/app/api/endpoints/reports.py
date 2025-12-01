@@ -2,13 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException, status, Response, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional, List
 from datetime import date
+import uuid
 
-from ... import crud, schemas, auth
-from ...utils.pdf_generator import generate_inspection_pdf_report # Assuming this utility exists
+from ... import schemas, auth
+from ...crud.crud_inspection import crud_inspection
+from ...utils.pdf_generator import generate_inspection_pdf_report
 
 router = APIRouter()
 
-@router.get("/pdf/inspections", summary="Generate PDF Report for Inspections", response_class=Response)
+@router.get("/pdf/inspections", summary="Generate PDF Report for Inspections", response_class=Response, dependencies=[Depends(auth.PermissionChecker("reports:export"))])
 async def get_inspections_pdf(
     db: AsyncSession = Depends(auth.get_db),
     current_user: schemas.User = Depends(auth.get_current_active_user),
@@ -20,46 +22,47 @@ async def get_inspections_pdf(
 ):
     """
     Generates a PDF report for inspection records based on various filters.
-    Requires 'view_all_records' permission.
+    Requires 'reports:export' permission.
     """
-    # Permission check is handled by PermissionChecker dependency, no need for manual check here.
-
     inspections_data = []
+    
+    # Convert dates to datetime for query if needed, or let CRUD handle it (assuming CRUD takes datetime)
+    # crud_inspection expects datetime
+    start_dt = datetime.combine(start_date, datetime.min.time()) if start_date else None
+    end_dt = datetime.combine(end_date, datetime.max.time()) if end_date else None
 
     if report_type == "all":
-        # Fetch all inspections within the date range
-        paginated_response = await crud.get_inspection_records(
+        paginated_response = await crud_inspection.get_multi_filtered(
             db,
-            start_date=start_date,
-            end_date=end_date,
-            limit=1000 # Max limit for reports
+            start_date=start_dt,
+            end_date=end_dt,
+            limit=1000 
         )
         inspections_data = paginated_response.get("records", [])
     elif report_type == "building":
         if not building_id:
             raise HTTPException(status_code=400, detail="Building ID is required for building report type.")
-        # Fetch inspections for a specific building within the date range
-        paginated_response = await crud.get_inspection_records(
+        paginated_response = await crud_inspection.get_multi_filtered(
             db,
-            # Note: crud.get_inspection_records does not directly support building_id filter.
-            # You might need a specific CRUD function or adjust get_inspection_records to support it.
-            # For now, we'll assume it's handled if passed through, or fetch all and filter post-query.
-            # A more robust solution would filter at the DB level.
-            building_id=building_id, # This parameter needs to be handled in get_inspection_records
-            start_date=start_date,
-            end_date=end_date,
+            building_id=building_id,
+            start_date=start_dt,
+            end_date=end_dt,
             limit=1000
         )
         inspections_data = paginated_response.get("records", [])
     elif report_type == "student":
         if not student_id:
             raise HTTPException(status_code=400, detail="Student ID is required for student report type.")
-        # Fetch inspections for a specific student within the date range
-        paginated_response = await crud.get_inspection_records_by_student(
+        try:
+            s_uuid = uuid.UUID(student_id)
+        except ValueError:
+             raise HTTPException(status_code=400, detail="Invalid Student ID format.")
+             
+        paginated_response = await crud_inspection.get_multi_filtered(
             db,
-            student_id=student_id,
-            start_date=start_date, # This parameter needs to be handled in get_inspection_records_by_student
-            end_date=end_date, # This parameter needs to be handled in get_inspection_records_by_student
+            student_id=s_uuid,
+            start_date=start_dt,
+            end_date=end_dt,
             limit=1000
         )
         inspections_data = paginated_response.get("records", [])
@@ -70,6 +73,7 @@ async def get_inspections_pdf(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No inspection records found for the given criteria.")
 
     # Convert SQLAlchemy models to Pydantic models, then to dicts
+    # Assuming generate_inspection_pdf_report takes a list of dicts
     inspections_dicts = [schemas.InspectionRecord.model_validate(inspection).model_dump() for inspection in inspections_data]
 
     try:

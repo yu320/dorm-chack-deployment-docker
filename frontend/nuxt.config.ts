@@ -12,7 +12,7 @@ export default defineNuxtConfig({
   routeRules: {
     '/**': {
       headers: {
-        'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:;",
+        'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.iconify.design http://localhost:8000 ws://localhost:3000;",
         'X-Frame-Options': 'SAMEORIGIN',
         'X-Content-Type-Options': 'nosniff',
         'Referrer-Policy': 'strict-origin-when-cross-origin',
@@ -25,7 +25,7 @@ export default defineNuxtConfig({
   // Add runtime config for API endpoint
   runtimeConfig: {
     public: {
-      apiBase: '', // API calls are now proxied by Vite, so this should be empty
+      apiBase: 'http://localhost:8000', // Point directly to backend instead of using proxy
     }
   },
 
@@ -100,7 +100,6 @@ export default defineNuxtConfig({
   vite: {
     server: {
       proxy: {
-        // Proxy /api/** requests to our backend server
         '/api': {
           target: 'http://localhost:8000',
           changeOrigin: true,

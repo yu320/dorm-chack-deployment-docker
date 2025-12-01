@@ -58,8 +58,8 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    roles = relationship("Role", secondary=user_roles, back_populates="users")
-    student = relationship("Student", back_populates="user", uselist=False) # One-to-one with Student
+    roles = relationship("Role", secondary=user_roles, back_populates="users", lazy="selectin")
+    student = relationship("Student", back_populates="user", uselist=False, lazy="selectin") # One-to-one with Student
 
 Role.users = relationship("User", secondary=user_roles, back_populates="roles")
 

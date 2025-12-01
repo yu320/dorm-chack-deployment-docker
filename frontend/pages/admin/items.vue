@@ -10,15 +10,15 @@
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 flex justify-between items-center">
       <div class="flex space-x-3">
         <button 
-          @click="batchUpdateStatus(true)" 
-          :disabled="selectedItems.length === 0 || loading"
+          @click="handleBatchUpdate(true)" 
+          :disabled="selectedItems.length === 0 || isLoading"
           class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {{ $t('admin.batchActivate') }}
         </button>
         <button 
-          @click="batchUpdateStatus(false)" 
-          :disabled="selectedItems.length === 0 || loading"
+          @click="handleBatchUpdate(false)" 
+          :disabled="selectedItems.length === 0 || isLoading"
           class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {{ $t('admin.batchDeactivate') }}
@@ -30,51 +30,41 @@
     </div>
 
     <!-- Items Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-700">
-            <tr>
-              <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ $t('admin.name') }}</th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ $t('admin.description') }}</th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ $t('dashboard.status') }}</th>
-              <th scope="col" class="relative px-6 py-3">
-                <span class="sr-only">{{ $t('admin.actions') }}</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            <tr v-for="item in items" :key="item.id">
-              <td class="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                <input type="checkbox" v-model="selectedItems" :value="item.id" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ item.name }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ item.description }}</td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span 
-                  :class="[
-                    'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
-                    item.is_active ? 'bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                  ]"
-                >
-                  {{ item.is_active ? $t('admin.active') : $t('admin.inactive') }}
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <a href="#" @click.prevent="openEditModal(item)" class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300 mr-4">{{ $t('admin.edit') }}</a>
-                <a href="#" @click.prevent="deleteItem(item.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">{{ $t('admin.delete') }}</a>
-              </td>
-            </tr>
-            <tr v-if="items.length === 0">
-              <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">{{ $t('admin.noInspectionItemsFound') }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <DataTable 
+      :columns="tableColumns" 
+      :data="items" 
+      :loading="isLoading" 
+      :actions="true"
+      :empty-text="$t('admin.noInspectionItemsFound')"
+    >
+        <!-- Custom Checkbox Header -->
+        <template #header-checkbox>
+             <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+        </template>
+
+        <!-- Checkbox Cell -->
+        <template #checkbox="{ item }">
+             <input type="checkbox" v-model="selectedItems" :value="item.id" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+        </template>
+
+        <!-- Status Cell -->
+        <template #is_active="{ item }">
+            <span 
+                :class="[
+                'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
+                item.is_active ? 'bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                ]"
+            >
+                {{ item.is_active ? $t('admin.active') : $t('admin.inactive') }}
+            </span>
+        </template>
+
+        <!-- Actions Cell -->
+        <template #actions="{ item }">
+            <a href="#" @click.prevent="openEditModal(item)" class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300 mr-4">{{ $t('admin.edit') }}</a>
+            <a href="#" @click.prevent="handleDelete(item.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">{{ $t('admin.delete') }}</a>
+        </template>
+    </DataTable>
 
     <!-- Pagination -->
     <div v-if="totalPages > 1" class="mt-6 flex justify-center">
@@ -95,7 +85,7 @@
     <div v-if="showModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex justify-center items-center">
       <div class="relative p-8 bg-white dark:bg-gray-800 w-full max-w-md mx-auto rounded-lg shadow-lg">
         <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">{{ isEditMode ? $t('admin.editItem') : $t('admin.createItem') }}</h3>
-        <form @submit.prevent="saveItem">
+        <form @submit.prevent="handleSave">
           <div class="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label for="itemName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ $t('admin.name') }} (中文)</label>
@@ -137,35 +127,22 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue';
 import { useI18n } from '#imports';
-import { useAuth } from '~/composables/useAuth';
 import { useSnackbar } from '~/composables/useSnackbar';
-
-interface InspectionItem {
-  id: string;
-  name: string;
-  name_en?: string;
-  description: string;
-  description_en?: string;
-  is_active: boolean;
-}
-
-interface PaginatedItemsResponse {
-  total: number;
-  records: InspectionItem[];
-}
+import { useItems } from '~/composables/useItems';
+import DataTable from '~/components/common/DataTable.vue';
+import type { InspectionItem } from '~/types';
 
 definePageMeta({
   permission: 'manage_items',
 });
 
 const { t } = useI18n();
-const { apiFetch } = useAuth();
 const { showSnackbar } = useSnackbar();
+const { getItems, createItem, updateItem, deleteItem, batchUpdateStatus, isLoading } = useItems();
 
 const items = ref<InspectionItem[]>([]);
 const showModal = ref(false);
 const isEditMode = ref(false);
-const loading = ref(true);
 const currentItem = ref<Partial<InspectionItem>>({
   name: '',
   description: '',
@@ -180,27 +157,31 @@ const totalItems = ref(0);
 const itemsPerPage = 10;
 const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage));
 
-const fetchItems = async () => {
-  loading.value = true;
+// Table Columns
+const tableColumns = computed(() => [
+  { key: 'checkbox', label: '', class: 'px-2 py-3 w-10' }, // Custom column for checkbox
+  { key: 'name', label: t('admin.name'), class: 'text-left' },
+  { key: 'name_en', label: t('admin.name_en'), class: 'text-left' }, // Added name_en column
+  { key: 'description', label: t('admin.description'), class: 'text-left' },
+  { key: 'description_en', label: t('admin.description_en'), class: 'text-left' }, // Added description_en column
+  { key: 'is_active', label: t('admin.status'), class: 'text-left' },
+]);
+
+const fetchItemsData = async () => {
   try {
-    const params = new URLSearchParams({
-      skip: ((currentPage.value - 1) * itemsPerPage).toString(),
-      limit: itemsPerPage.toString(),
-    });
-    const response = await apiFetch(`/api/v1/items/?${params.toString()}`) as PaginatedItemsResponse;
+    const skip = (currentPage.value - 1) * itemsPerPage;
+    const response = await getItems({ skip, limit: itemsPerPage }); // Pass search query if any
     items.value = response.records;
     totalItems.value = response.total;
   } catch (error) {
-    showSnackbar({ message: t('snackbar.failedToLoadItems'), type: 'error' });
-  } finally {
-    loading.value = false;
+    // Snackbar message handled in composable
   }
 };
 
 const changePage = (page: number) => {
   if (page > 0 && page <= totalPages.value) {
     currentPage.value = page;
-    fetchItems();
+    fetchItemsData();
   }
 };
 
@@ -220,38 +201,30 @@ const closeModal = () => {
   showModal.value = false;
 };
 
-const saveItem = async () => {
+const handleSave = async () => {
   try {
     if (isEditMode.value && currentItem.value.id) {
-      await apiFetch(`/api/v1/items/${currentItem.value.id}`, {
-        method: 'PUT',
-        body: currentItem.value,
-      });
-      showSnackbar({ message: t('snackbar.itemUpdated'), type: 'success' });
+      await updateItem(currentItem.value.id, currentItem.value);
+      // Snackbar message is now handled inside useItems composable
     } else {
-      await apiFetch('/api/v1/items/', {
-        method: 'POST',
-        body: currentItem.value,
-      });
-      showSnackbar({ message: t('snackbar.itemCreated'), type: 'success' });
+      await createItem(currentItem.value as any);
+      // Snackbar message is now handled inside useItems composable
     }
     closeModal();
-    await fetchItems();
+    await fetchItemsData();
   } catch (error) {
-    showSnackbar({ message: t('snackbar.failedToSaveItem'), type: 'error' });
+    // Snackbar message is now handled inside useItems composable
   }
 };
 
-const deleteItem = async (id: string) => {
+const handleDelete = async (id: string) => {
   if (confirm(t('confirm.deleteItem'))) {
     try {
-      await apiFetch(`/api/v1/items/${id}`, {
-        method: 'DELETE',
-      });
-      showSnackbar({ message: t('snackbar.itemDeleted'), type: 'success' });
-      await fetchItems();
+      await deleteItem(id);
+      // Snackbar message is now handled inside useItems composable
+      await fetchItemsData();
     } catch (error) {
-      showSnackbar({ message: t('snackbar.failedToDeleteItem'), type: 'error' });
+      // Snackbar message is now handled inside useItems composable
     }
   }
 };
@@ -270,22 +243,19 @@ watch(selectedItems, (newVal) => {
   }
 });
 
-const batchUpdateStatus = async (is_active: boolean) => {
+const handleBatchUpdate = async (isActive: boolean) => {
   if (selectedItems.value.length === 0) {
     showSnackbar({ message: t('snackbar.selectOneTable'), type: 'warning' });
     return;
   }
   
-  if (confirm(t('confirm.batchUpdateItemStatus', { status: is_active ? t('admin.active') : t('admin.inactive') }))) {
+  if (confirm(t('confirm.batchUpdateItemStatus', { status: isActive ? t('admin.active') : t('admin.inactive') }))) {
     try {
-      await apiFetch('/api/v1/items/batch-update-status', {
-        method: 'PUT',
-        body: { item_ids: selectedItems.value, is_active: is_active },
-      });
+      await batchUpdateStatus(selectedItems.value, isActive);
       showSnackbar({ message: t('snackbar.batchUpdateItemStatusSuccess'), type: 'success' });
       selectedItems.value = [];
       selectAll.value = false;
-      await fetchItems();
+      await fetchItemsData();
     } catch (error) {
       showSnackbar({ message: t('snackbar.batchUpdateItemStatusFailed'), type: 'error' });
     }
@@ -293,6 +263,6 @@ const batchUpdateStatus = async (is_active: boolean) => {
 };
 
 onMounted(() => {
-  fetchItems();
+  fetchItemsData();
 });
 </script>

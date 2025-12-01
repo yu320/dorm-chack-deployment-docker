@@ -46,7 +46,9 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "could_not_validate_credentials": "Could not validate credentials",
         "not_authenticated": "Not authenticated",
         "failed_to_register_user": "Failed to register user: {detail}",
-        "password_too_short": "Password must be at least 8 characters long"
+        "password_too_short": "Password must be at least 8 characters long",
+        "announcement_not_found_or_inactive": "Announcement not found or inactive",
+        "announcement_not_found": "Announcement not found"
     },
     "zh": {
         "invalid_credentials": "使用者名稱或密碼不正確",
@@ -89,7 +91,9 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "could_not_validate_credentials": "無法驗證憑證",
         "not_authenticated": "未驗證",
         "failed_to_register_user": "註冊使用者失敗：{detail}",
-        "password_too_short": "密碼長度須至少8碼"
+        "password_too_short": "密碼長度須至少8碼",
+        "announcement_not_found_or_inactive": "公告不存在或已停用",
+        "announcement_not_found": "公告不存在"
     }
 }
 

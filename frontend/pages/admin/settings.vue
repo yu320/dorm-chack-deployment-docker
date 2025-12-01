@@ -15,7 +15,7 @@
         <button @click="activeTab = 'permissions'" :class="[activeTab === 'permissions' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300', 'whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm']">
           {{ $t('admin.permissions') }}
         </button>
-        <button v-if="hasPermission('manage_patrol_locations')" @click="activeTab = 'patrol_locations'" :class="[activeTab === 'patrol_locations' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300', 'whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm']">
+        <button v-if="hasPermission('patrol_locations:view')" @click="activeTab = 'patrol_locations'" :class="[activeTab === 'patrol_locations' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300', 'whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm']">
           {{ $t('admin.patrolLocations') }}
         </button>
       </nav>
@@ -24,35 +24,27 @@
       <div v-if="activeTab === 'roles'">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">{{ $t('admin.roles') }}</h2>
-          <button @click="openRoleModal('create')" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">
+          <button v-if="hasPermission('roles:manage')" @click="openRoleModal('create')" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">
             {{ $t('admin.createRole') }}
           </button>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-200 dark:border-gray-700">
-          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead class="bg-gray-50 dark:bg-gray-700/50">
-              <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ $t('admin.name') }}</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ $t('admin.permissions') }}</th>
-                <th class="relative px-6 py-3"><span class="sr-only">{{ $t('admin.actions') }}</span></th>
-              </tr>
-            </thead>
-            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              <tr v-for="role in roles" :key="role.id">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ role.name }}</td>
-                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                  <span v-for="perm in role.permissions" :key="perm.id" class="mr-2 mb-2 inline-block bg-gray-200 dark:bg-gray-600 rounded-full px-3 py-1 text-xs font-semibold text-gray-700 dark:text-gray-200">
-                    {{ $t('permissions.' + perm.name + '.title') }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button @click="openRoleModal('edit', role)" class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300 mr-4">{{ $t('admin.edit') }}</button>
-                  <button @click="handleRoleDelete(role.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">{{ $t('admin.delete') }}</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          :columns="roleTableColumns"
+          :data="roles"
+          :loading="isLoading"
+          :actions="true"
+          :empty-text="$t('admin.noRolesFound')"
+        >
+          <template #cell-permissions="{ item }">
+            <span v-for="perm in item.permissions" :key="perm.id" class="mr-2 mb-2 inline-block bg-gray-200 dark:bg-gray-600 rounded-full px-3 py-1 text-xs font-semibold text-gray-700 dark:text-gray-200">
+              {{ $t('permissions.' + perm.name + '.title') }}
+            </span>
+          </template>
+          <template #actions="{ item }">
+            <button v-if="hasPermission('roles:manage')" @click.prevent="openRoleModal('edit', item)" class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300 mr-4">{{ $t('admin.edit') }}</button>
+            <button v-if="hasPermission('roles:manage')" @click.prevent="handleRoleDelete(item.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">{{ $t('admin.delete') }}</button>
+          </template>
+        </DataTable>
       </div>
 
       <!-- Permissions Tab -->
@@ -69,39 +61,30 @@
       </div>
 
       <!-- Patrol Locations Tab -->
-      <div v-if="activeTab === 'patrol_locations' && hasPermission('manage_patrol_locations')">
+      <div v-if="activeTab === 'patrol_locations' && hasPermission('patrol_locations:view')">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">{{ $t('admin.patrolLocations') }}</h2>
           <div class="flex items-center space-x-4">
-            <select v-model="selectedBuildingId" class="block w-full max-w-xs border-gray-300 rounded-md shadow-sm">
+            <select v-model="selectedBuildingId" class="block w-full max-w-xs border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
               <option v-for="building in buildings" :key="building.id" :value="building.id">{{ building.name }}</option>
             </select>
-            <button @click="openPatrolModal('create')" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">
+            <button v-if="hasPermission('patrol_locations:manage')" @click="openPatrolModal('create')" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">
               {{ $t('admin.createPatrolLocation') }}
             </button>
           </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-200 dark:border-gray-700">
-          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-             <thead class="bg-gray-50 dark:bg-gray-700/50">
-              <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ $t('admin.name') }}</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ $t('admin.household') }}</th>
-                <th class="relative px-6 py-3"><span class="sr-only">{{ $t('admin.actions') }}</span></th>
-              </tr>
-            </thead>
-            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              <tr v-for="location in patrolLocations" :key="location.id">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ location.name }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ location.household }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button @click="openPatrolModal('edit', location)" class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300 mr-4">{{ $t('admin.edit') }}</button>
-                  <button @click="handlePatrolDelete(location.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">{{ $t('admin.delete') }}</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          :columns="patrolLocationTableColumns"
+          :data="patrolLocations"
+          :loading="isLoading"
+          :actions="true"
+          :empty-text="$t('admin.noPatrolLocationsFound')"
+        >
+          <template #actions="{ item }">
+            <button v-if="hasPermission('patrol_locations:manage')" @click.prevent="openPatrolModal('edit', item)" class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300 mr-4">{{ $t('admin.edit') }}</button>
+            <button v-if="hasPermission('patrol_locations:manage')" @click.prevent="handlePatrolDelete(item.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">{{ $t('admin.delete') }}</button>
+          </template>
+        </DataTable>
       </div>
     </div>
 
@@ -159,22 +142,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useAuth } from '~/composables/useAuth';
 import { useSnackbar } from '~/composables/useSnackbar';
+import { useUsers } from '~/composables/useUsers'; // Import useUsers
 import { useI18n } from '#imports';
+import type { Role, Permission, PaginatedResponse } from '~/types'; // Import types
+import DataTable from '~/components/common/DataTable.vue'; // Explicitly import DataTable
 
 // Interfaces
-interface Permission {
-  id: string;
-  name: string;
-  description: string;
-}
-interface Role {
-  id: string;
-  name: string;
-  permissions: Permission[];
-}
 interface PatrolLocation {
   id: string;
   name: string;
@@ -193,6 +169,7 @@ definePageMeta({
 const { apiFetch, hasPermission } = useAuth();
 const { showSnackbar } = useSnackbar();
 const { t } = useI18n();
+const { getRoles, createRole, updateRole, deleteRole, getPermissions, isLoading } = useUsers(); // Destructure useUsers
 
 // General State
 const activeTab = ref('roles');
@@ -212,19 +189,48 @@ const showPatrolModal = ref(false);
 const patrolModalMode = ref<'create' | 'edit'>('create');
 const editablePatrolLocation = ref<any>({});
 
+const { 
+  create: createPatrol, 
+  update: updatePatrol, 
+  remove: removePatrol, 
+  getAll: getPatrols 
+} = useGenericCrud<PatrolLocation>('/api/v1/patrol-locations/');
+
+// Computed Columns
+const roleTableColumns = computed(() => [
+  { key: 'name', label: t('admin.name') },
+  { key: 'permissions', label: t('admin.permissions') },
+]);
+
+const patrolLocationTableColumns = computed(() => [
+  { key: 'name', label: t('admin.name') },
+  { key: 'household', label: t('admin.household') },
+]);
+
 // --- Methods for Roles ---
 const fetchRoles = async () => {
   try {
-    const response = await apiFetch('/api/v1/roles/');
-    roles.value = response.records;
-  } catch (e) { showSnackbar({ message: t('snackbar.failedToLoadRoles'), type: 'error' }); }
+    const response = await getRoles() as PaginatedResponse<Role>;
+    console.log('fetchRoles response:', response); // Debug log
+    if (response && response.records) {
+      roles.value = response.records;
+      console.log('Roles set to:', roles.value); // Debug log
+    } else {
+      console.warn('getRoles did not return expected data structure:', response);
+      roles.value = [];
+    }
+  } catch (e: any) { 
+    console.error('Error fetching roles in settings.vue:', e); // Debug log
+    showSnackbar({ message: e.message || t('snackbar.failedToLoadRoles'), type: 'error' });
+    roles.value = [];
+  }
 };
 
 const fetchPermissions = async () => {
   try {
-    const response = await apiFetch('/api/v1/permissions/');
+    const response = await getPermissions() as PaginatedResponse<Permission>;
     permissions.value = response.records;
-  } catch (e) { showSnackbar({ message: t('snackbar.failedToLoadPermissions'), type: 'error' }); }
+  } catch (e) { /* Snackbar message handled in composable */ }
 };
 
 const openRoleModal = (mode: 'create' | 'edit', role: any = {}) => {
@@ -239,40 +245,42 @@ const openRoleModal = (mode: 'create' | 'edit', role: any = {}) => {
 };
 
 const handleRoleSave = async () => {
-
   const isEdit = roleModalMode.value === 'edit';
-  const url = isEdit ? `/api/v1/roles/${editableRole.value.id}` : '/api/v1/roles/';
-  const method = isEdit ? 'PUT' : 'POST';
-
   try {
-    await apiFetch(url, { method, body: editableRole.value });
-    showSnackbar({ message: t(isEdit ? 'snackbar.roleUpdated' : 'snackbar.roleCreated'), type: 'success' });
+    if (isEdit) {
+        await updateRole(editableRole.value.id, editableRole.value);
+        // Snackbar message handled in composable
+    } else {
+        await createRole(editableRole.value);
+        // Snackbar message handled in composable
+    }
     await fetchRoles();
     showRoleModal.value = false;
   } catch (error) {
-    showSnackbar({ message: t('snackbar.failedToSaveRole'), type: 'error' });
+    // Snackbar message handled in composable
   }
 };
 
 const handleRoleDelete = async (id: string) => {
   if (!confirm(t('confirm.deleteRole'))) return;
   try {
-    await apiFetch(`/api/v1/roles/${id}`, { method: 'DELETE' });
-    showSnackbar({ message: t('snackbar.roleDeleted'), type: 'success' });
+    await deleteRole(id);
+    // Snackbar message handled in composable
     await fetchRoles();
   } catch (error) {
-    showSnackbar({ message: t('snackbar.failedToDeleteRole'), type: 'error' });
+    // Snackbar message handled in composable
   }
 };
 
 // --- Methods for Patrol Locations ---
 const fetchBuildings = async () => {
   try {
-    buildings.value = await apiFetch('/api/v1/buildings/');
+    const data = await apiFetch('/api/v1/buildings') as Building[]; // Removed trailing slash
+    buildings.value = data;
     if (buildings.value.length > 0 && !selectedBuildingId.value) {
       selectedBuildingId.value = buildings.value[0].id;
     }
-  } catch (e) { showSnackbar(t('snackbar.failedToLoadBuildings'), 'error'); }
+  } catch (e) { showSnackbar({ message: t('snackbar.failedToLoadBuildings'), type: 'error' }); }
 };
 
 const fetchPatrolLocations = async () => {
@@ -281,8 +289,19 @@ const fetchPatrolLocations = async () => {
     return;
   }
   try {
-    const data = await apiFetch(`/api/v1/patrol-locations/?building_id=${selectedBuildingId.value}`);
-    patrolLocations.value = data.records;
+    const data = await getPatrols({ building_id: selectedBuildingId.value }) as any; // useGenericCrud returns array, but check if it's wrapped
+    // The API endpoint /api/v1/patrol-locations might return PaginatedResponse or List.
+    // Checking crud_patrol_location.py or endpoint would be good, but let's assume it matches getGenericCrud T[].
+    // If it returns { records: ... }, we need to handle it.
+    // Let's check backend later if this fails. Assuming List for now based on useGenericCrud typing.
+    // Actually, looking at other usage, it seems to return PaginatedResponse usually.
+    if (data.records) {
+        patrolLocations.value = data.records;
+    } else if (Array.isArray(data)) {
+        patrolLocations.value = data;
+    } else {
+        patrolLocations.value = [];
+    }
   } catch (e) { 
     patrolLocations.value = [];
     showSnackbar({ message: t('snackbar.failedToLoadPatrolLocations'), type: 'error' }); 
@@ -301,27 +320,29 @@ const openPatrolModal = (mode: 'create' | 'edit', location: any = {}) => {
 
 const handlePatrolSave = async () => {
   const isEdit = patrolModalMode.value === 'edit';
-  const url = isEdit ? `/api/v1/patrol-locations/${editablePatrolLocation.value.id}` : '/api/v1/patrol-locations/';
-  const method = isEdit ? 'PUT' : 'POST';
 
   try {
-    await apiFetch(url, { method, body: editablePatrolLocation.value });
-    showSnackbar({ message: t('snackbar.patrolLocationSaved'), type: 'success' });
+    if (isEdit) {
+      await updatePatrol(editablePatrolLocation.value.id, editablePatrolLocation.value);
+    } else {
+      await createPatrol(editablePatrolLocation.value);
+    }
+    // Snackbar message is now handled in composable
     await fetchPatrolLocations();
     showPatrolModal.value = false;
   } catch (error) {
-    showSnackbar({ message: t('snackbar.failedToSavePatrolLocation'), type: 'error' });
+    // Snackbar message is now handled in composable
   }
 };
 
 const handlePatrolDelete = async (id: string) => {
   if (!confirm(t('confirm.deletePatrolLocation'))) return;
   try {
-    await apiFetch(`/api/v1/patrol-locations/${id}`, { method: 'DELETE' });
-    showSnackbar({ message: t('snackbar.patrolLocationDeleted'), type: 'success' });
+    await removePatrol(id);
+    // Snackbar message is now handled in composable
     await fetchPatrolLocations();
   } catch (error) {
-    showSnackbar({ message: t('snackbar.failedToDeletePatrolLocation'), type: 'error' });
+    // Snackbar message is now handled in composable
   }
 };
 

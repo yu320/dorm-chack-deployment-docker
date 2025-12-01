@@ -69,6 +69,25 @@ class NotificationService:
         
         await self.send_email_notification(recipients=[to_email], subject=subject, body_html=body_html)
 
+    async def send_verification_email(self, to_email: str, username: str, verification_link: str, lang: str = "en") -> None:
+        """
+        發送帳戶驗證郵件
+        """
+        if lang not in ["en", "zh"]:
+            lang = "en"
+
+        subjects = {
+            "en": "Verify Your Account - Student Dormitory Inspection System",
+            "zh": "驗證您的帳戶 - 學生宿舍檢查系統"
+        }
+        subject = subjects.get(lang, subjects["en"])
+
+        template_path = f'email/{lang}/verification_email.html'
+        template = self.env.get_template(template_path)
+        body_html = template.render(username=username, verification_link=verification_link)
+
+        await self.send_email_notification(recipients=[to_email], subject=subject, body_html=body_html)
+
     async def send_welcome_email(self, to_email: str, username: str, lang: str = "en") -> None:
         """
         發送註冊成功歡迎信 (使用 Jinja2 模板)

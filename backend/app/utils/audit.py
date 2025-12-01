@@ -77,13 +77,15 @@ def audit_log(action: str, resource_type: str, resource_id_src: Optional[Union[s
             except Exception as e:
                 logger.error(f"Error extracting details for audit log: {e}")
             
-            await crud_audit.create_audit_log(
+            await crud_audit.create(
                 db=db,
+                obj_in={
+                    "action": action,
+                    "resource_type": resource_type,
+                    "resource_id": resource_id,
+                    "details": log_details
+                },
                 user_id=current_user.id,
-                action=action,
-                resource_type=resource_type,
-                resource_id=resource_id, # Use extracted resource_id
-                details=log_details,
                 ip_address=request.client.host if request and request.client else None
             )
             return response_data

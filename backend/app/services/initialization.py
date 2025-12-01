@@ -21,20 +21,54 @@ async def seed_database(db: AsyncSession):
     # Define core permissions for the system
     core_permissions_data = [
         {"name": "admin:full_access", "description": "Grants full administrative access"},
+        
+        # Users & Roles
         {"name": "users:view", "description": "View user accounts"},
         {"name": "users:manage", "description": "Create, update, and delete user accounts"},
         {"name": "roles:view", "description": "View roles and their permissions"},
         {"name": "roles:manage", "description": "Create, update, and delete roles and permissions"},
-        {"name": "students:view", "description": "View student information"},
+        
+        # Students
+        {"name": "students:view_own", "description": "View own student information"},
+        {"name": "students:view_all", "description": "View all student information"},
         {"name": "students:manage", "description": "Create, update, and delete student information"},
+        
+        # Rooms
         {"name": "rooms:view", "description": "View room information"},
         {"name": "rooms:manage", "description": "Create, update, and delete room information"},
-        {"name": "inspections:view", "description": "View inspection records"},
-        {"name": "inspections:submit", "description": "Submit new inspection records"},
+        
+        # Inspections
+        {"name": "inspections:view_own", "description": "View own inspection records"},
+        {"name": "inspections:view_all", "description": "View all inspection records"},
+        {"name": "inspections:submit_own", "description": "Submit own inspection records"},
+        {"name": "inspections:submit_any", "description": "Submit inspection records for any student"},
         {"name": "inspections:review", "description": "Review and approve inspection records"},
+        {"name": "inspections:reinspect", "description": "Mark for reinspection or perform reinspection"},
+        {"name": "inspections:delete", "description": "Delete inspection records"},
+
+        # Announcements
+        {"name": "announcements:view", "description": "View announcements"},
+        {"name": "announcements:create", "description": "Create announcements"},
+        {"name": "announcements:edit", "description": "Edit announcements"},
+        {"name": "announcements:delete", "description": "Delete announcements"},
+        
+        # Patrols (LightsOutPatrol)
+        {"name": "patrol_locations:view", "description": "View patrol locations"},
+        {"name": "patrol_locations:manage", "description": "Create, update, and delete patrol locations"},
+        {"name": "patrols:perform", "description": "Perform and submit lights out patrols"},
+        {"name": "patrols:view_all", "description": "View all lights out patrol history"},
+        
+        # Reports & Statistics
+        {"name": "reports:view_statistics", "description": "View dashboard statistics and charts"},
+        {"name": "reports:export", "description": "Export data and reports"},
+
+        # Data Management
+        {"name": "data:import", "description": "Import bulk data"},
+        
+        # Others
         {"name": "audit_logs:view", "description": "View system audit logs"},
-        {"name": "manage_items", "description": "Manage inspection items"}, # Add missing permission
-        # Add more permissions as needed
+        {"name": "manage_items", "description": "Manage inspection items"},
+        {"name": "system:settings", "description": "Manage system-wide settings"},
     ]
 
     existing_permissions_result = await db.execute(select(Permission))
@@ -61,11 +95,32 @@ async def seed_database(db: AsyncSession):
 
     # Define core roles and their associated permissions
     roles_data = {
-        "admin": ["admin:full_access", "users:view", "users:manage", "roles:view", "roles:manage",
-                  "students:view", "students:manage", "rooms:view", "rooms:manage",
-                  "inspections:view", "inspections:submit", "inspections:review", "audit_logs:view", "manage_items"],
-        "inspector": ["students:view", "rooms:view", "inspections:view", "inspections:submit"],
-        "student": ["students:view", "inspections:view"] # Students can view their own data
+        "admin": [
+            "admin:full_access", 
+            "users:view", "users:manage", 
+            "roles:view", "roles:manage",
+            "students:view_all", "students:manage", 
+            "rooms:view", "rooms:manage",
+            "inspections:view_all", "inspections:submit_any", "inspections:review", "inspections:reinspect", "inspections:delete",
+            "announcements:view", "announcements:create", "announcements:edit", "announcements:delete",
+            "patrol_locations:view", "patrol_locations:manage", "patrols:perform", "patrols:view_all", # New Patrol Permissions
+            "reports:view_statistics", "reports:export",
+            "data:import", "system:settings",
+            "audit_logs:view", "manage_items"
+        ],
+        "inspector": [
+            "students:view_all", 
+            "rooms:view", 
+            "inspections:view_all", "inspections:submit_any",
+            "announcements:view",
+            "patrol_locations:view", "patrols:perform", "patrols:view_all", # New Patrol Permissions for Inspector
+            "reports:view_statistics"
+        ],
+        "student": [
+            "students:view_own", 
+            "inspections:view_own", "inspections:submit_own",
+            "announcements:view"
+        ]
     }
 
     for role_name, perms_list in roles_data.items():

@@ -14,36 +14,25 @@
     </div>
 
     <!-- Users Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-700/50">
-            <tr>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ $t('admin.username') }}</th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ $t('admin.activeStatus') }}</th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ $t('admin.roles') }}</th>
-              <th scope="col" class="relative px-6 py-3"><span class="sr-only">{{ $t('admin.actions') }}</span></th>
-            </tr>
-          </thead>
-          <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            <tr v-for="user in users" :key="user.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ user.username }}</td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', user.is_active ? 'bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300']">
-                  {{ user.is_active ? $t('admin.active') : $t('admin.inactive') }}
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                {{ user.roles.map(role => role.name).join(', ') }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <a href="#" @click.prevent="openModal('edit', user)" class="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300 mr-4">{{ $t('admin.edit') }}</a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <DataTable
+      :columns="tableColumns"
+      :data="users"
+      :loading="isLoading"
+      :actions="true"
+      :empty-text="$t('admin.noUsersFound')"
+    >
+      <template #is_active="{ item }">
+        <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', item.is_active ? 'bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300']">
+          {{ item.is_active ? $t('admin.active') : $t('admin.inactive') }}
+        </span>
+      </template>
+      <template #roles="{ item }">
+        {{ item.roles.map((role: any) => role.name).join(', ') }}
+      </template>
+      <template #actions="{ item }">
+        <a href="#" @click.prevent="openModal('edit', item)" class="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300 mr-4">{{ $t('admin.edit') }}</a>
+      </template>
+    </DataTable>
 
     <!-- Pagination -->
     <div v-if="totalPages > 1" class="mt-6 flex justify-center">
@@ -79,13 +68,8 @@
                   @click="showPassword = !showPassword"
                   class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-700 dark:text-gray-300 focus:outline-none"
                 >
-                                  <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                  </svg>
-                                  <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
-                                  </svg>                </button>
+                  <icon :name="showPassword ? 'heroicons:eye-slash' : 'heroicons:eye'" class="w-5 h-5" />
+                </button>
               </div>
             </div>
              <div v-if="modalMode === 'create'">
@@ -118,31 +102,17 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { useAuth } from '~/composables/useAuth';
 import { useSnackbar } from '~/composables/useSnackbar';
+import { useUsers } from '~/composables/useUsers';
+import DataTable from '~/components/common/DataTable.vue';
 import { useI18n } from '#imports';
-
-// Interfaces
-interface Role {
-  id: string;
-  name: string;
-}
-interface User {
-  id: string;
-  username: string;
-  is_active: boolean;
-  roles: Role[];
-}
-interface PaginatedUserResponse {
-  total: number;
-  records: User[];
-}
+import type { User, Role, PaginatedResponse } from '~/types';
 
 definePageMeta({
   permission: 'manage_users',
 });
 
-const { apiFetch } = useAuth();
+const { getUsers, createUser, updateUser, getRoles, isLoading } = useUsers();
 const { showSnackbar } = useSnackbar();
 const { t } = useI18n();
 
@@ -153,7 +123,6 @@ const showModal = ref(false);
 const modalMode = ref<'create' | 'edit'>('create');
 const editableUser = ref<any>({});
 const showPassword = ref(false);
-const loading = ref(false);
 
 // Pagination State
 const currentPage = ref(1);
@@ -161,37 +130,38 @@ const totalUsers = ref(0);
 const usersPerPage = 10;
 const totalPages = computed(() => Math.ceil(totalUsers.value / usersPerPage));
 
+// Table Columns
+const tableColumns = computed(() => [
+  { key: 'username', label: t('admin.username'), class: 'text-left' },
+  { key: 'is_active', label: t('admin.activeStatus'), class: 'text-left' },
+  { key: 'roles', label: t('admin.roles'), class: 'text-left' },
+]);
+
 // Computed
 const modalTitle = computed(() => modalMode.value === 'create' ? t('admin.createUser') : t('admin.editUser'));
 
 // Methods
-const fetchUsers = async () => {
-  loading.value = true;
+const fetchUsersData = async () => {
   try {
-    const params = new URLSearchParams({
-      skip: ((currentPage.value - 1) * usersPerPage).toString(),
-      limit: usersPerPage.toString(),
-    });
-    const data = await apiFetch(`/api/v1/users/?${params.toString()}`) as PaginatedUserResponse;
+    const skip = (currentPage.value - 1) * usersPerPage;
+    const data = await getUsers({ skip, limit: usersPerPage });
     users.value = data.records;
     totalUsers.value = data.total;
   } catch (error) {
-    showSnackbar({ message: t('snackbar.failedToLoadUsers'), type: 'error' });
-  } finally {
-    loading.value = false;
+    // Snackbar message handled in composable
   }
 };
 
 const changePage = (page: number) => {
   if (page > 0 && page <= totalPages.value) {
     currentPage.value = page;
-    fetchUsers();
+    fetchUsersData();
   }
 };
 
-const fetchRoles = async () => {
+const fetchRolesData = async () => {
   try {
-    const data = await apiFetch('/api/v1/roles/');
+    const data = await getRoles();
     // Handle both paginated and direct array responses
     allRoles.value = (data.records || data) as Role[];
   } catch (error) {
@@ -216,21 +186,24 @@ const closeModal = () => {
 
 const handleSave = async () => {
   const isEdit = modalMode.value === 'edit';
-  const url = isEdit ? `/api/v1/users/${editableUser.value.id}` : '/api/v1/users/';
-  const method = isEdit ? 'PUT' : 'POST';
 
   try {
-    await apiFetch(url, { method, body: editableUser.value });
-    showSnackbar({ message: t(isEdit ? 'snackbar.userUpdated' : 'snackbar.userCreated'), type: 'success' });
-    await fetchUsers();
+    if (isEdit) {
+      await updateUser(editableUser.value.id, editableUser.value);
+      // Snackbar message is now handled within useUsers composable
+    } else {
+      await createUser(editableUser.value);
+      // Snackbar message is now handled within useUsers composable
+    }
+    await fetchUsersData();
     closeModal();
   } catch (error) {
-    showSnackbar({ message: t('snackbar.failedToSaveUser'), type: 'error' });
+    // Snackbar message is now handled within useUsers composable
   }
 };
 
 onMounted(() => {
-  fetchUsers();
-  fetchRoles();
+  fetchUsersData();
+  fetchRolesData();
 });
 </script>

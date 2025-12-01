@@ -423,6 +423,27 @@ input:focus, textarea:focus, select:focus {
       padding-left: 1rem;
       padding-right: 1rem;
   }
+
+  /* Mobile Dropdown - Accordion Style */
+  .dropdown-menu-floating {
+      position: static;
+      width: 100%;
+      box-shadow: none;
+      border: none;
+      margin-top: 0;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      padding-left: 1rem;
+      max-height: none;
+      opacity: 1;
+      transform: none;
+      background-color: var(--gray-50); /* Light gray background for contrast */
+  }
+
+  .dark .dropdown-menu-floating {
+      background-color: rgba(255, 255, 255, 0.05);
+      border: none;
+  }
 }
 
 /* 小型螢幕 (手機) */

@@ -13,7 +13,7 @@
       <template v-else>
         <!-- Admin Home -->
         <AdminHome 
-          v-if="isAdmin" 
+          v-if="isAdmin && dashboardData" 
           :stats="dashboardData"
         />
 

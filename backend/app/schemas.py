@@ -6,10 +6,19 @@ from datetime import datetime
 from .models import InspectionStatus, ItemStatus, LightStatus, TagType
 
 # --- Permission Schemas ---
-class Permission(BaseModel):
-    id: uuid.UUID
+class PermissionBase(BaseModel):
     name: str
     description: Optional[str] = None
+
+class PermissionCreate(PermissionBase):
+    pass
+
+class PermissionUpdate(PermissionBase):
+    name: Optional[str] = None
+    description: Optional[str] = None
+
+class Permission(PermissionBase):
+    id: uuid.UUID
     model_config = ConfigDict(from_attributes=True)
 
 class PaginatedPermissions(BaseModel):
@@ -448,14 +457,19 @@ class PaginatedAnnouncements(BaseModel):
     records: List[AnnouncementResponse]
 
 # --- Audit Log Schemas ---
-class AuditLog(BaseModel):
-    id: uuid.UUID
-    user_id: Optional[uuid.UUID] = None
+class AuditLogBase(BaseModel):
     action: str
     resource_type: str
     resource_id: Optional[str] = None
     details: Optional[dict] = None
     ip_address: Optional[str] = None
+
+class AuditLogCreate(AuditLogBase):
+    pass
+
+class AuditLog(AuditLogBase):
+    id: uuid.UUID
+    user_id: Optional[uuid.UUID] = None
     created_at: datetime
     user: Optional[User] = None
 

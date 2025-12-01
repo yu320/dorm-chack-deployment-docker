@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
-from ... import crud, schemas
+from ... import schemas
+from ...crud import crud_permission # Import from package init
 from ...database import get_db
 from ...auth import PermissionChecker
 
@@ -25,5 +26,6 @@ async def read_permissions(
 
     A user must have the **manage_roles** permission to use this.
     """
-    permissions_data = await crud.get_permissions(db=db, skip=skip, limit=limit)
-    return permissions_data
+    permissions = await crud_permission.get_multi(db=db, skip=skip, limit=limit)
+    total = await crud_permission.get_count(db)
+    return {"total": total, "records": permissions}

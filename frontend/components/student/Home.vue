@@ -6,20 +6,20 @@
         <Icon name="heroicons:sparkles" class="mr-3 text-yellow-300" />
         {{ $t('welcome') }}, {{ user?.username || 'Student' }}!
       </h2>
-      <p class="text-white/90 text-lg">Here's what's happening with your dormitory today.</p>
+      <p class="text-white/90 text-lg">{{ $t('student.welcomeMessage') }}</p>
     </div>
 
     <!-- Latest Announcements Section -->
     <div>
       <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
         <Icon name="heroicons:megaphone" class="mr-3 text-primary-600" />
-        最新公告
+        {{ $t('student.latestAnnouncements') }}
       </h3>
       <div v-if="loadingAnnouncements" class="text-center py-8">
-        <p class="text-gray-500 dark:text-gray-400">載入中...</p>
+        <p class="text-gray-500 dark:text-gray-400">{{ $t('loading') }}</p>
       </div>
       <div v-else-if="announcements.length === 0" class="text-center py-8">
-        <p class="text-gray-500 dark:text-gray-400">目前沒有公告</p>
+        <p class="text-gray-500 dark:text-gray-400">{{ $t('admin.noAnnouncementsFound') }}</p>
       </div>
       <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <CommonAnnouncementCard
@@ -77,7 +77,7 @@
             </div>
             <div>
               <div class="font-semibold text-gray-800 dark:text-white">{{ $t('index.quickActions.newInspection') }}</div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">Start a new room check</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">{{ $t('student.startInspectionDesc') }}</div>
             </div>
             <Icon name="heroicons:chevron-right" class="ml-auto w-5 h-5 text-gray-400 group-hover:text-primary-500 transition-colors" />
           </NuxtLink>
@@ -88,7 +88,7 @@
             </div>
             <div>
               <div class="font-semibold text-gray-800 dark:text-white">{{ $t('records.myRecordsTitle') }}</div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">View past history</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">{{ $t('student.viewHistoryDesc') }}</div>
             </div>
             <Icon name="heroicons:chevron-right" class="ml-auto w-5 h-5 text-gray-400 group-hover:text-purple-500 transition-colors" />
           </NuxtLink>

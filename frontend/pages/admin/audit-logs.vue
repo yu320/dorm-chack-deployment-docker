@@ -70,7 +70,7 @@
             <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50">
                 <span>{{ $t('pagination.previous') }}</span>
             </button>
-            <button @click="changePage(currentPage + 1)" :disabled="logs.length < limit" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50">
+            <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50">
                 <span>{{ $t('pagination.next') }}</span>
             </button>
         </nav>
@@ -87,11 +87,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { ref, reactive, onMounted, computed } from 'vue';
 import { useAuth } from '~/composables/useAuth';
 import { useSnackbar } from '~/composables/useSnackbar';
 import Modal from '~/components/common/Modal.vue';
+import DataTable from '~/components/common/DataTable.vue'; // Explicit import
+import { useI18n } from '#imports';
 
 definePageMeta({
   permission: 'audit_logs:view',
@@ -104,7 +105,9 @@ const { showSnackbar } = useSnackbar();
 const logs = ref<any[]>([]);
 const loading = ref(false);
 const currentPage = ref(1);
+const totalLogs = ref(0);
 const limit = 20;
+const totalPages = computed(() => Math.ceil(totalLogs.value / limit));
 
 const showDetailsModal = ref(false);
 const selectedLog = ref<any>(null);
@@ -144,8 +147,9 @@ const fetchLogs = async () => {
         if (!value) query.delete(key);
     }
 
-    const response = await apiFetch(`/api/v1/audit-logs/?${query.toString()}`);
-    logs.value = response as any[];
+    const response = await apiFetch(`/api/v1/audit-logs/?${query.toString()}`) as any;
+    logs.value = response.records || [];
+    totalLogs.value = response.total || 0;
   } catch (error) {
     console.error('Failed to fetch audit logs:', error);
     showSnackbar({ message: t('snackbar.failedToLoadLogs'), type: 'error' });
@@ -155,7 +159,7 @@ const fetchLogs = async () => {
 };
 
 const changePage = (page: number) => {
-  if (page < 1) return;
+  if (page < 1 || page > totalPages.value) return;
   currentPage.value = page;
   fetchLogs();
 };

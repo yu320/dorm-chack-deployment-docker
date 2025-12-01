@@ -76,13 +76,13 @@ onMounted(async () => {
       <div class="text-left mb-16">
         <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
           <Icon name="heroicons:megaphone" class="mr-3 text-primary-600" />
-          最新公告
+          {{ $t('student.latestAnnouncements') }}
         </h2>
         <div v-if="loading" class="text-center py-8">
-          <p class="text-gray-500 dark:text-gray-400">載入中...</p>
+          <p class="text-gray-500 dark:text-gray-400">{{ $t('loading') }}</p>
         </div>
         <div v-else-if="announcements.length === 0" class="text-center py-8">
-          <p class="text-gray-500 dark:text-gray-400">目前沒有公告</p>
+          <p class="text-gray-500 dark:text-gray-400">{{ $t('admin.noAnnouncementsFound') }}</p>
         </div>
         <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <CommonAnnouncementCard

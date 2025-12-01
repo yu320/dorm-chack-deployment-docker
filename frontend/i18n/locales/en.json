@@ -3,6 +3,14 @@
   "welcomeMessage": "The easiest way to manage dormitory inspections.",
   "getStarted": "Get Started",
   "close": "Close",
+  "common": {
+    "search": "Search",
+    "selected": "{count} selected",
+    "cancel": "Cancel",
+    "chinese": "Chinese",
+    "englishOptional": "English (Optional)",
+    "save": "Save"
+  },
   "guest": {
     "howItWorks": "How it Works",
     "step1Title": "Login",
@@ -112,7 +120,10 @@
     "passed": "Passed",
     "failed": "Failed",
     "passRate": "Inspection Pass Rate",
-    "topDamageTypes": "Top Damage Types"
+    "topDamageTypes": "Top Damage Types",
+    "inspectionStatus": "Inspection Status",
+    "topDamagedItems": "Top Damaged Items",
+    "damageReportsCount": "Number of Damaged/Missing Reports"
   },
   "inspection": {
     "newTitle": "Dormitory Room Inspection",
@@ -154,7 +165,8 @@
     "orDragAndDrop": "or drag and drop",
     "fileTypes": "PNG, JPG, GIF up to 10MB",
     "preview": "Preview:",
-    "photoPreview": "Photo preview"
+    "photoPreview": "Photo preview",
+    "unknownItem": "Unknown Item"
   },
   "records": {
     "myRecordsTitle": "My Inspection Records",
@@ -173,6 +185,7 @@
     "fullName": "Full Name",
     "studentId": "Student ID",
     "class": "Class",
+    "roomInfo": "Room / Bed",
     "actions": "Actions",
     "edit": "Edit",
     "delete": "Delete",
@@ -207,6 +220,26 @@
     "settings": "Settings",
     "manageDorms": "Dorm Management",
     "systemSettings": "System Settings",
+    "announcementsTitle": "Announcement Management",
+    "manageAnnouncementsDescription": "Manage system announcements.",
+    "searchAnnouncementsPlaceholder": "Search announcements...",
+    "createAnnouncement": "Create Announcement",
+    "createAnnouncementTitle": "Create Announcement",
+    "editAnnouncementTitle": "Edit Announcement",
+    "title": "Title",
+    "englishTitle": "English Title",
+    "tag": "Tag",
+    "tagPlaceholder": "Enter tag...",
+    "tagType": "Tag Type",
+    "tagTypePrimary": "Primary",
+    "tagTypeSuccess": "Success",
+    "tagTypeWarning": "Warning",
+    "tagTypeDanger": "Danger",
+    "tagTypeInfo": "Info",
+    "content": "Content",
+    "englishContent": "English Content",
+    "enableAnnouncement": "Enable Announcement",
+    "createdAt": "Created At",
     "auditLogsTitle": "Audit Logs",
     "auditLogsDescription": "View system operation logs to track user activity.",
     "filterByAction": "Filter by action...",
@@ -237,10 +270,11 @@
     "householdOptional": "Household (Optional)",
     "password": "Password",
     "adminActions": "Admin Actions",
+    "deleteSelected": "Delete Selected",
     "updateStatus": "Update Status",
     "update": "Update",
     "emailReport": "Email Report",
-    "recipientEmailPlaceholder": "Recipient\u0027s email...",
+    "recipientEmailPlaceholder": "Recipient's email...",
     "sendEmail": "Send Email",
     "noStudentsFound": "No students found.",
     "selectBed": "Select a bed",
@@ -360,7 +394,11 @@
       "importFailed": "Failed to import data.",
       "created": "Created Records",
       "updated": "Updated Records"
-    }
+    },
+    "noRolesFound": "No roles found",
+    "noUsersFound": "No users found.",
+    "noPatrolLocationsFound": "No patrol locations found",
+    "noAnnouncementsFound": "No announcements found"
   },
   "snackbar": {
     "failedToLoadStudents": "Failed to load students.",
@@ -421,14 +459,45 @@
     "passwordChangedSuccessfully": "Password changed successfully!",
     "failedToChangePassword": "Failed to change password.",
     "selectAnImageFile": "Please select an image file.",
-    "imageCompressionFailed": "Image compression failed."
+    "imageCompressionFailed": "Image compression failed.",
+    "recordDeleted": "Record deleted successfully!",
+    "recordsDeleted": "{count} records deleted successfully!",
+    "failedToDeleteRecord": "Failed to delete record.",
+    "assignBedSuccess": "Bed assigned successfully!",
+    "failedToAssignBed": "Failed to assign bed.",
+    "roomCreated": "Room created successfully!",
+    "roomUpdated": "Room updated successfully!",
+    "roomDeleted": "Room deleted successfully!",
+    "failedToSaveRoom": "Failed to save room.",
+    "failedToDeleteRoom": "Failed to delete room.",
+    "failedToLoadRooms": "Failed to load rooms.",
+    "bedCreated": "Bed created successfully!",
+    "bedUpdated": "Bed updated successfully!",
+    "bedDeleted": "Bed deleted successfully!",
+    "failedToSaveBed": "Failed to save bed.",
+    "failedToDeleteBed": "Failed to delete bed.",
+    "failedToLoadBeds": "Failed to load beds.",
+    "buildingCreated": "Building created successfully!",
+    "buildingUpdated": "Building updated successfully!",
+    "buildingDeleted": "Building deleted successfully!",
+    "failedToSaveBuilding": "Failed to save building.",
+    "failedToDeleteBuilding": "Failed to delete building.",
+    "failedToLoadAnnouncements": "Failed to load announcements.",
+    "announcementCreated": "Announcement created successfully!",
+    "announcementUpdated": "Announcement updated successfully!",
+    "announcementDeleted": "Announcement deleted successfully!",
+    "failedToSaveAnnouncement": "Failed to save announcement.",
+    "noAnnouncementsFound": "No announcements found",
+    "name_en": "Name (English)",
+    "description_en": "Description (English)"
   },
   "confirm": {
     "deleteRole": "Are you sure you want to delete this role?",
     "deletePatrolLocation": "Are you sure you want to delete this patrol location?",
     "deleteStudent": "Are you sure you want to delete this student?",
     "deleteItem": "Are you sure you want to delete this item?",
-    "loadDraft": "An unsaved draft was found. Do you want to load it?"
+    "loadDraft": "An unsaved draft was found. Do you want to load it?",
+    "deleteAnnouncement": "Are you sure you want to delete this announcement?"
   },
   "navigation": {
     "home": "Home",
@@ -575,5 +644,11 @@
   "globalSearch": {
     "placeholder": "Search students, rooms...",
     "error": "Search failed"
+  },
+  "student": {
+    "welcomeMessage": "Here's what's happening with your dormitory today.",
+    "latestAnnouncements": "Latest Announcements",
+    "startInspectionDesc": "Start a new room check",
+    "viewHistoryDesc": "View past history"
   }
 }

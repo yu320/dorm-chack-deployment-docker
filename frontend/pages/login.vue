@@ -94,7 +94,7 @@
               :disabled="loading"
               class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-white font-semibold bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition transform hover:scale-105 active:scale-95 disabled:bg-primary-400 disabled:cursor-not-allowed"
             >
-              <span v-if="loading">Signing In...</span>
+              <span v-if="loading">{{ $t('loading') }}...</span>
               <span v-else>{{ $t('login.signIn') }}</span>
             </button>
           </div>

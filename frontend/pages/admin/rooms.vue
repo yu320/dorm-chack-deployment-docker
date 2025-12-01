@@ -23,8 +23,8 @@
             <div class="flex justify-between items-center">
               <span class="font-semibold text-gray-800 dark:text-gray-200">{{ building.name }}</span>
               <div class="flex items-center space-x-2">
-                <button @click.stop="openModal('building', 'edit', building)" class="text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
-                <button @click.stop="handleDelete('building', building.id)" class="text-gray-400 hover:text-red-600 dark:hover:text-red-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                <button @click.stop="openModal('building', 'edit', building)" class="text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>{{ $t('admin.edit') }}</button>
+                <button @click.stop="handleDelete('building', building.id)" class="text-gray-400 hover:text-red-600 dark:hover:text-red-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>{{ $t('admin.delete') }}</button>
               </div>
             </div>
           </li>
@@ -49,8 +49,8 @@
                 <p class="text-xs text-gray-500 dark:text-gray-400">{{ room.room_type }}</p>
               </div>
               <div class="flex items-center space-x-2">
-                <button @click.stop="openModal('room', 'edit', room)" class="text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
-                <button @click.stop="handleDelete('room', room.id)" class="text-gray-400 hover:text-red-600 dark:hover:text-red-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                <button @click.stop="openModal('room', 'edit', room)" class="text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>{{ $t('admin.edit') }}</button>
+                <button @click.stop="handleDelete('room', room.id)" class="text-gray-400 hover:text-red-600 dark:hover:text-red-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>{{ $t('admin.delete') }}</button>
               </div>
             </div>
           </li>
@@ -72,11 +72,11 @@
             <div class="flex justify-between items-center">
               <div>
                 <p class="font-semibold text-gray-800 dark:text-gray-200">{{ bed.bed_number }}</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $t(`admin.${bed.status.toLowerCase()}`) }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $t(`admin.${bed.status}`) }}</p>
               </div>
               <div class="flex items-center space-x-2">
-                <button @click.stop="openModal('bed', 'edit', bed)" class="text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
-                <button @click.stop="handleDelete('bed', bed.id)" class="text-gray-400 hover:text-red-600 dark:hover:text-red-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                <button @click.stop="openModal('bed', 'edit', bed)" class="text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>{{ $t('admin.edit') }}</button>
+                <button @click.stop="handleDelete('bed', bed.id)" class="text-gray-400 hover:text-red-600 dark:hover:text-red-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>{{ $t('admin.delete') }}</button>
               </div>
             </div>
           </li>
@@ -137,36 +137,21 @@
 </template>
 
 <script setup lang="ts">
-
 import { ref, onMounted, computed } from 'vue';
-import { useAuth } from '~/composables/useAuth';
 import { useSnackbar } from '~/composables/useSnackbar';
-
-// Define interfaces for the data structure
-interface Bed {
-  id: number;
-  bed_number: string;
-  status: string;
-}
-interface Room {
-  id: number;
-  room_number: string;
-  room_type: string;
-  beds: Bed[];
-}
-interface Building {
-  id: number;
-  name: string;
-  rooms: Room[];
-}
+import { useBuildings } from '~/composables/useBuildings';
+import { useRooms } from '~/composables/useRooms';
+import { useI18n } from '#imports';
+import type { Building, Room, Bed } from '~/types'; // Import types
 
 definePageMeta({
   permission: 'manage_rooms',
 });
 
-const { apiFetch } = useAuth();
 const { showSnackbar } = useSnackbar();
 const { t } = useI18n();
+const { getBuildingsFullTree, createBuilding, updateBuilding, deleteBuilding } = useBuildings();
+const { createRoom, updateRoom, deleteRoom, createBed, updateBed, deleteBed } = useRooms();
 
 // Reactive state
 const buildingsTree = ref<Building[]>([]);
@@ -181,35 +166,35 @@ const editableItem = ref<any>({});
 // Computed properties
 const modalTitle = computed(() => {
   if (!modalTarget.value) return '';
+  const targetMap = {
+    building: 'Building',
+    room: 'Room',
+    bed: 'Bed'
+  };
+  const suffix = targetMap[modalTarget.value];
   if (modalMode.value === 'create') {
-    if (modalTarget.value === 'building') return t('admin.createBuildingTitle');
-    if (modalTarget.value === 'room') return t('admin.createRoomTitle');
-    if (modalTarget.value === 'bed') return t('admin.createBedTitle');
+    return t(`admin.create${suffix}Title`);
   } else {
-    if (modalTarget.value === 'building') return t('admin.editBuildingTitle');
-    if (modalTarget.value === 'room') return t('admin.editRoomTitle');
-    if (modalTarget.value === 'bed') return t('admin.editBedTitle');
+    return t(`admin.edit${suffix}Title`);
   }
-  return '';
 });
 
 // Methods
 const fetchTree = async () => {
   try {
-    const data = await apiFetch('/api/v1/buildings/full-tree/');
+    const data = await getBuildingsFullTree();
     buildingsTree.value = data as Building[];
     // After fetching, re-select the items if they still exist
     if (selectedBuilding.value) {
       selectedBuilding.value = buildingsTree.value.find(b => b.id === selectedBuilding.value!.id) || null;
     }
     if (selectedBuilding.value && selectedRoom.value) {
-      selectedRoom.value = selectedBuilding.value.rooms.find(r => r.id === selectedRoom.value!.id) || null;
+      selectedRoom.value = selectedBuilding.value.rooms?.find(r => r.id === selectedRoom.value!.id) || null;
     } else {
       selectedRoom.value = null;
     }
   } catch (error) {
-
-    showSnackbar(t('snackbar.failedToLoadData'), 'error');
+    showSnackbar({ message: t('snackbar.failedToLoadData'), type: 'error' });
   }
 };
 
@@ -223,7 +208,7 @@ const selectRoom = (room: Room) => {
 };
 
 const openModal = (target: 'building' | 'room' | 'bed', mode: 'create' | 'edit', item: any = {}) => {
-    modalTarget.value = target;
+  modalTarget.value = target;
   modalMode.value = mode;
   if (mode === 'create') {
     editableItem.value = {};
@@ -242,27 +227,32 @@ const closeModal = () => {
 const handleSave = async () => {
   const target = modalTarget.value;
   const mode = modalMode.value;
-  let url = `/api/v1/${target}s/`;
-  let method: 'POST' | 'PUT' = 'POST';
-
   const body = { ...editableItem.value };
 
-  if (mode === 'edit') {
-    url = `/api/v1/${target}s/${body.id}`;
-    method = 'PUT';
-  } else {
-    if (target === 'room') body.building_id = selectedBuilding.value?.id;
-    if (target === 'bed') body.room_id = selectedRoom.value?.id;
-  }
-
   try {
-    await apiFetch(url, { method, body });
-    showSnackbar(t('snackbar.itemSaved', { item: target }), 'success');
+    if (target === 'building') {
+      if (mode === 'create') await createBuilding(body);
+      else await updateBuilding(body.id, body);
+    } else if (target === 'room') {
+      if (mode === 'create') {
+        body.building_id = selectedBuilding.value?.id;
+        await createRoom(body);
+      } else {
+        await updateRoom(body.id, body);
+      }
+    } else if (target === 'bed') {
+      if (mode === 'create') {
+        body.room_id = selectedRoom.value?.id;
+        await createBed(body);
+      } else {
+        await updateBed(body.id, body);
+      }
+    }
+
     await fetchTree();
     closeModal();
   } catch (error) {
-
-    showSnackbar(t('snackbar.failedToSaveItem', { item: target }), 'error');
+    // Snackbar message is now handled by the specific composable (useBuildings/useRooms)
   }
 };
 
@@ -270,12 +260,13 @@ const handleDelete = async (target: 'building' | 'room' | 'bed', id: number) => 
   if (!confirm(t('confirm.deleteItem', { item: target }))) return;
 
   try {
-    await apiFetch(`/api/v1/${target}s/${id}`, { method: 'DELETE' });
-    showSnackbar(t('snackbar.itemDeleted', { item: target }), 'success');
+    if (target === 'building') await deleteBuilding(id);
+    else if (target === 'room') await deleteRoom(id);
+    else if (target === 'bed') await deleteBed(id);
+
     await fetchTree();
   } catch (error) {
-
-    showSnackbar(t('snackbar.failedToDeleteItem', { item: target }), 'error');
+    // Snackbar message is now handled by the specific composable (useBuildings/useRooms)
   }
 };
 

@@ -42,13 +42,15 @@ async def login_for_access_token(
         )
     
     # Audit Log: Login
-    await crud_audit.create_audit_log(
+    await crud_audit.create(
         db=auth_service.db,
-        action="LOGIN",
-        resource_type="User",
-        resource_id=str(user.id),
+        obj_in={
+            "action": "LOGIN",
+            "resource_type": "User",
+            "resource_id": str(user.id),
+            "details": {"username": user.username},
+        },
         user_id=user.id,
-        details={"username": user.username},
         ip_address=request.client.host if request.client else None
     )
 
@@ -115,35 +117,20 @@ async def register_user(
     background_tasks: BackgroundTasks,
     auth_service: AuthService = Depends(get_auth_service)
 ):
-    """
-    Registers a new user. Email verification is handled by AuthService.
-    """
-    db_user = await crud_user.get_user_by_email(auth_service.db, email=user_in.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    try:
-        created_user = await auth_service.register_user(user_in=user_in)
-        
-        # Detect language
-        accept_language = request.headers.get("accept-language", "en")
-        lang = "zh" if "zh" in accept_language.lower() else "en"
+        """
+        Registers a new user. Email verification is handled by AuthService.
+        """
+        db_user = await crud_user.get_by_email(auth_service.db, email=user_in.email)
+        if db_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
 
-        # Send welcome email in background
-        background_tasks.add_task(
-            notification_service.send_welcome_email,
-            to_email=created_user.email,
-            username=created_user.username,
-            lang=lang
-        )
-        
-        return created_user # 直接返回 created_user 物件
-    except HTTPException as e:
-        raise e
-    except ValueError as e: # Catch ValueError specifically
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) # Re-raise as 400
-    except Exception as e:
-        logger.error(f"DEBUG: Unhandled exception during registration: {e}") # Add this line for debugging
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to register user: {e}")
+        try:
+            user = await auth_service.register_user(user_in)
+        except ValueError as e:
+             raise HTTPException(status_code=400, detail=str(e))
+
+        return user
+
 
 @router.get("/verify-email/{token}", response_model=schemas.Message, status_code=status.HTTP_200_OK)
 async def verify_email(token: str, auth_service: AuthService = Depends(get_auth_service)):
@@ -177,6 +164,12 @@ async def password_recovery(
     reset_token = security.create_password_reset_token(email=email_data.email, expires_delta=expires_delta)
     
     reset_link = f"{settings.API_BASE_URL}/reset-password?token={reset_token}" # Frontend URL
+
+    # DX Optimization: Log reset link in DEBUG mode
+    if settings.DEBUG:
+        logger.info(f"==========================================")
+        logger.info(f"PASSWORD RESET LINK (DEBUG): {reset_link}")
+        logger.info(f"==========================================")
     
     # Detect language
     accept_language = request.headers.get("accept-language", "en")

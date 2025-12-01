@@ -48,7 +48,7 @@ class InspectionService:
             data_to_create.append((inspection_in, signature_filename))
 
         # Create records in database
-        return await crud_inspection.batch_create_inspection_records(
+        return await crud_inspection.batch_create(
             self.db,
             data=data_to_create,
             inspector_id=inspector_id
@@ -84,7 +84,7 @@ class InspectionService:
                         raise HTTPException(status_code=e.status_code, detail=f"Failed to upload item photo for item: {e.detail}")
 
         # Create the inspection record in the database
-        inspection_record = await crud_inspection.create_inspection_record(
+        inspection_record = await crud_inspection.create_with_details(
             self.db,
             inspection_in=inspection_in,
             student_id=student_id,

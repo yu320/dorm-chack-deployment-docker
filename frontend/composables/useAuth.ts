@@ -28,7 +28,7 @@ export const useAuth = () => {
   const apiFetch = (url: string, options: any = {}) => {
     // HttpOnly cookie is automatically sent by the browser, no need to add Authorization header manually
     return $fetch(url, {
-      baseURL: config.public.apiBase,
+      baseURL: config.public.apiBase, // Use the configured API base URL
       credentials: 'include', // Ensure cookies are sent with requests
       ...options,
     });
@@ -76,8 +76,11 @@ export const useAuth = () => {
       user.value = fetchedUser;
       // console.log('Auth: fetchUser successful. User set.');
       return true;
-    } catch (error) {
+    } catch (error: any) {
       // console.error('Auth: Failed to fetch user (possibly unauthenticated):', error);
+      if (error.response && error.response.status !== 401) {
+        console.error('Auth: Failed to fetch user:', error);
+      }
       user.value = null; // Clear user if fetching fails
       return false;
     }
