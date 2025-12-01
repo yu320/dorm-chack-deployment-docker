@@ -4,11 +4,14 @@ FROM node:18-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Copy package.json only to avoid lockfile conflicts across platforms
+COPY package.json ./
 
-# Install dependencies
-RUN npm ci --legacy-peer-deps
+# Install build tools for native dependencies (if any)
+RUN apk add --no-cache python3 make g++
+
+# Install dependencies (generating a new package-lock.json)
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of the application source code
 COPY . .
