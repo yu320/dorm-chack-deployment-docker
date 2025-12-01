@@ -11,6 +11,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     default-libmysqlclient-dev \
     libpq-dev \
+    libmagic1 \
+    libssl-dev \
+    libffi-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy the dependencies file to the working directory
