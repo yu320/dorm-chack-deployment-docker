@@ -113,10 +113,29 @@ input, textarea, select {
   transition: var(--transition-fast);
 }
 
+/* Dark mode support for inputs */
+.dark input, 
+.dark textarea, 
+.dark select {
+    background-color: var(--gray-700);
+    border-color: var(--gray-600);
+    color: white;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+    color: var(--gray-400);
+}
+
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.dark input:focus, .dark textarea:focus, .dark select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2); /* Cyan-500 for dark mode */
 }
 
 /* 動畫優化 */

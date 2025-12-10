@@ -544,6 +544,16 @@
     "dataImport": "Data Import",
     "logout": "Logout"
   },
+  "patrol": {
+    "selectBuilding": "Select Building",
+    "clickToStart": "Click to start inspection",
+    "lightsOn": "Lights On",
+    "lightsOff": "Lights Off",
+    "confirmInspection": "Confirm Inspection",
+    "violationSummary": "{count} Violations, {normal} Normal",
+    "allClear": "All Lights Off",
+    "patrolSubmitted": "Patrol record submitted"
+  },
   "pagination": {
     "previous": "Previous",
     "next": "Next"
@@ -574,7 +584,9 @@
     "table": "Table",
     "trash can": "Trash Can",
     "wardrobe": "Wardrobe",
-    "window": "Window"
+    "window": "Window",
+    "bathroom": "Bathroom",
+    "balcony": "Balcony"
   },
   "footer": {
     "copyright": "© {year} Student Dormitory Inspection System. All Rights Reserved."
