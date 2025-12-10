@@ -14,8 +14,14 @@ COPY . .
 # We also clean node_modules just in case, though .dockerignore should exclude it
 RUN rm -rf package-lock.json node_modules
 
-# Single, clean install to ensure native dependencies are built for Alpine
-RUN npm install --legacy-peer-deps
+# Install dependencies ignoring scripts first
+RUN npm install --legacy-peer-deps --ignore-scripts
+
+# Explicitly install the missing binding for Alpine (musl)
+RUN npm install --cpu=x64 --os=linux --libc=musl -D @oxc-parser/binding-linux-x64-musl
+
+# Rebuild and run postinstall (nuxt prepare)
+RUN npm rebuild && npm run postinstall
 
 # Build the application for production
 RUN npm run build
