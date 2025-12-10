@@ -22,6 +22,21 @@ class CRUDRoom(CRUDBase[Room, RoomCreate, RoomUpdate]):
         result = await db.execute(query)
         return result.scalar()
 
+    async def get_multi(
+        self, db: AsyncSession, *, skip: int = 0, limit: int = 100, building_id: Optional[int] = None
+    ) -> List[Room]:
+        query = select(Room).options(joinedload(Room.building))
+        if building_id:
+            query = query.filter(Room.building_id == building_id)
+        query = query.offset(skip).limit(limit)
+        result = await db.execute(query)
+        return result.scalars().all()
+
+    async def get_by_building_and_number(self, db: AsyncSession, building_id: int, room_number: str) -> Optional[Room]:
+        query = select(Room).filter(Room.building_id == building_id, Room.room_number == room_number)
+        result = await db.execute(query)
+        return result.scalars().first()
+
     async def search(self, db: AsyncSession, query: str, skip: int = 0, limit: int = 100) -> Dict[str, Any]:
         search_pattern = f"%{query.lower()}%"
         

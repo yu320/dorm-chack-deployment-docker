@@ -13,6 +13,7 @@ from sqlalchemy import (
     UniqueConstraint,
     CHAR, # Use CHAR for UUIDs
 )
+from sqlalchemy.dialects.mysql import JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -202,6 +203,7 @@ class PatrolLocation(Base):
     name = Column(String(100), nullable=False) # e.g., "戶廳", "曬衣間", "一樓大廳"
     building_id = Column(Integer, ForeignKey("buildings.id"), nullable=False) # Stays Integer
     household = Column(String(50), index=True, nullable=True) # e.g., "A1201", null if it's a building-level area
+    check_items = Column(JSON, nullable=True) # List of items to check, e.g. ["Main Light", "AC"]
 
     building = relationship("Building")
     __table_args__ = (UniqueConstraint('building_id', 'household', 'name', name='_building_household_name_uc'),)
@@ -229,12 +231,14 @@ class LightsOutCheck(Base):
 
     id = Column(CHAR(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     patrol_id = Column(CHAR(36), ForeignKey("lights_out_patrols.id"), nullable=False)
-    patrol_location_id = Column(CHAR(36), ForeignKey("patrol_locations.id"), nullable=False)
+    patrol_location_id = Column(CHAR(36), ForeignKey("patrol_locations.id"), nullable=True) # Now Nullable
+    room_id = Column(Integer, ForeignKey("rooms.id"), nullable=True) # New field
     status = Column(Enum(LightStatus), nullable=False)
     notes = Column(Text)
 
     patrol = relationship("LightsOutPatrol", back_populates="checks")
     location = relationship("PatrolLocation")
+    room = relationship("Room") # New relationship
 
 
 class TokenType(str, enum.Enum):
@@ -254,8 +258,6 @@ class TokenBlocklist(Base):
 
     user = relationship("User") # Establish relationship
 
-
-from sqlalchemy.dialects.mysql import JSON # Import JSON for MySQL
 
 # --- Audit Log Model ---
 class AuditLog(Base):

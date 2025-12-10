@@ -1,6 +1,6 @@
 import uuid
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
-from typing import List, Optional
+from typing import List, Optional, Any
 from datetime import datetime
 
 from .models import InspectionStatus, ItemStatus, LightStatus, TagType
@@ -328,6 +328,7 @@ class PatrolLocationBase(BaseModel):
     name: str
     building_id: int # Stays int
     household: Optional[str] = None
+    check_items: Optional[List[Any]] = None # List of items to check
 
 class PatrolLocationCreate(PatrolLocationBase):
     pass
@@ -347,7 +348,8 @@ class PaginatedPatrolLocations(BaseModel):
 
 
 class LightsOutCheckBase(BaseModel):
-    patrol_location_id: uuid.UUID
+    patrol_location_id: Optional[uuid.UUID] = None
+    room_id: Optional[int] = None
     status: LightStatus
     notes: Optional[str] = None
 
@@ -356,7 +358,8 @@ class LightsOutCheckCreate(LightsOutCheckBase):
 
 class LightsOutCheck(LightsOutCheckBase):
     id: uuid.UUID
-    location: PatrolLocation
+    location: Optional[PatrolLocation] = None
+    room: Optional[Room] = None
     model_config = ConfigDict(from_attributes=True)
 
 
