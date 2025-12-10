@@ -49,8 +49,8 @@ async def get_single_active_announcement(
     獲取單一公告（公開，僅返回啟用的公告）
     """
     # ... existing code ...
-    announcement = await crud_announcement.get_active(db, announcement_id)
-    if not announcement:
+    announcement = await crud_announcement.get(db, announcement_id)
+    if not announcement or not announcement.is_active:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=_("announcement_not_found_or_inactive") # Use i18n

@@ -26,22 +26,19 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     # This code runs on startup
     logger.info("Running database migrations...")
-
+    
     # Get the absolute path to the backend directory
     backend_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # FIXED: Removed hardcoded Windows path
-    # alembic_path = os.path.join(backend_dir, ".venv", "Scripts", "alembic.exe")
-
     # Run alembic upgrade head
     try:
-        # FIXED: Use system alembic command which works in Linux Docker containers
-        subprocess.run(["alembic", "upgrade", "head"], check=True, cwd=backend_dir)
+        import sys
+        subprocess.run([sys.executable, "-m", "alembic", "upgrade", "head"], check=True, cwd=backend_dir)
         logger.info("Database migrations complete.")
     except subprocess.CalledProcessError as e:
         logger.error(f"Database migrations failed: {e}")
         # We might want to stop startup here, but for now we log error
-
+    
     logger.info("Seeding database...")
     async with AsyncSessionLocal() as db:
         await seed_database(db) # Database seeding should be part of migration or manual process
@@ -81,10 +78,10 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         # Remove "Value error, " prefix added by Pydantic if present
         if raw_msg.startswith("Value error, "):
             raw_msg = raw_msg.replace("Value error, ", "")
-
+        
         # Translate the message
         translated_msg = _(raw_msg, request)
-
+        
         # Reconstruct a simplified error object or just use the translated message
         # Here we keep the structure but update the message
         error_copy = error.copy()
