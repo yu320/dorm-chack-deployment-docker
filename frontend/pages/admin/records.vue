@@ -48,10 +48,11 @@
       :current-page="currentPage"
       :total-pages="totalPages"
       :selectable="true"
+      :actions="true"
       v-model="selectedRecords"
       @page-change="changePage"
     >
-        <template #status="{ item }">
+        <template #cell-status="{ item }">
             <span 
                 class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
                 :class="{
@@ -63,8 +64,14 @@
                 {{ item.status }}
             </span>
         </template>
-        <template #created_at="{ item }">
+        <template #cell-created_at="{ item }">
             {{ new Date(item.created_at).toLocaleString() }}
+        </template>
+        <template #cell-student="{ item }">
+            {{ item.student?.full_name }} ({{ item.student?.student_id_number }})
+        </template>
+        <template #cell-room="{ item }">
+             {{ item.room?.building?.name }} - {{ item.room?.room_number }}
         </template>
         <template #actions="{ item }">
             <button @click="viewRecord(item.id)" class="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300 font-medium mr-3">

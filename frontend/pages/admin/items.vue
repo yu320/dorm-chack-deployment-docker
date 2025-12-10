@@ -43,12 +43,12 @@
         </template>
 
         <!-- Checkbox Cell -->
-        <template #checkbox="{ item }">
+        <template #cell-checkbox="{ item }">
              <input type="checkbox" v-model="selectedItems" :value="item.id" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
         </template>
 
         <!-- Status Cell -->
-        <template #is_active="{ item }">
+        <template #cell-is_active="{ item }">
             <span 
                 :class="[
                 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',

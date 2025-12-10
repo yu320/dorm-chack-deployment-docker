@@ -34,19 +34,19 @@
       :actions="true"
       :empty-text="$t('admin.noAnnouncementsFound')"
     >
-      <template #tag="{ item }">
+      <template #cell-tag="{ item }">
         <span :class="`px-2 py-1 rounded-full text-xs ${getTagClass(item.tag_type)}`">
           {{ item.tag }}
         </span>
       </template>
       
-      <template #is_active="{ item }">
+      <template #cell-is_active="{ item }">
         <span :class="`px-2 py-1 rounded-full text-xs ${item.is_active ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'}`">
           {{ item.is_active ? '啟用' : '停用' }}
         </span>
       </template>
 
-      <template #created_at="{ item }">
+      <template #cell-created_at="{ item }">
         {{ new Date(item.created_at).toLocaleDateString('zh-TW') }}
       </template>
 

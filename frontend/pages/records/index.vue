@@ -14,13 +14,21 @@
       :actions="true"
       :empty-text="$t('records.noRecordsFound')"
     >
-        <template #created_at="{ item }">
+        <template #cell-created_at="{ item }">
             {{ new Date(item.created_at).toLocaleDateString() }}
         </template>
-        <template #room="{ item }">
-            {{ item.room.room_number }}
+        <template #cell-room="{ item }">
+            <span class="font-medium text-gray-800 dark:text-gray-200">
+                {{ item.room.building?.name }}棟 {{ item.room.room_number }} 房
+            </span>
+            <span v-if="item.room.room_type" class="text-gray-500 dark:text-gray-400 text-sm">
+                ({{ item.room.room_type }})
+            </span>
+            <span v-if="item.room.household" class="text-gray-500 dark:text-gray-400 text-sm block">
+                戶號: {{ item.room.household }}
+            </span>
         </template>
-        <template #status="{ item }">
+        <template #cell-status="{ item }">
             <span 
                 class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
                 :class="{

@@ -21,13 +21,21 @@
       :actions="true"
       :empty-text="$t('admin.noUsersFound')"
     >
-      <template #is_active="{ item }">
+      <template #cell-is_active="{ item }">
         <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', item.is_active ? 'bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300']">
           {{ item.is_active ? $t('admin.active') : $t('admin.inactive') }}
         </span>
       </template>
-      <template #roles="{ item }">
-        {{ item.roles.map((role: any) => role.name).join(', ') }}
+      <template #cell-roles="{ item }">
+        <div class="flex flex-wrap gap-1">
+          <span 
+            v-for="role in item.roles" 
+            :key="role.id" 
+            class="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+          >
+            {{ role.name }}
+          </span>
+        </div>
       </template>
       <template #actions="{ item }">
         <a href="#" @click.prevent="openModal('edit', item)" class="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300 mr-4">{{ $t('admin.edit') }}</a>
