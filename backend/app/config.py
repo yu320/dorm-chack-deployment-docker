@@ -16,7 +16,15 @@ class Settings(BaseSettings):
     SQLALCHEMY_DATABASE_URL: str
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440 # Extended to 24 hours
+
+    # [修改] JWT Access Token 過期時間 (分鐘)
+    # 預設 60 分鐘，但會優先讀取 .env 中的設定
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 
+
+    # [新增] 滑動換票門檻 (分鐘)
+    # 當 Token 剩餘時間少於此數值時，系統會自動發新 Token。
+    # 預設 30 分鐘，但會優先讀取 .env 中的設定
+    SLIDING_REFRESH_THRESHOLD_MINUTES: int = 30
 
     # First superuser
     FIRST_SUPERUSER: str
