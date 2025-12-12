@@ -21,7 +21,7 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     """Upgrade schema."""
     # Create TagType enum
-    op.execute("CREATE TYPE tagtype AS ENUM ('primary', 'success', 'warning', 'danger', 'info')")
+    # op.execute("CREATE TYPE tagtype AS ENUM ('primary', 'success', 'warning', 'danger', 'info')")
     
     # Create announcements table
     op.create_table(
