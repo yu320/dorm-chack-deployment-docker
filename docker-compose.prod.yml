@@ -19,13 +19,11 @@ services:
       - app-network
 
   nginx:
-    # 雖然 GHCR 裡有包設定檔，但我們這裡選擇掛載「本地設定檔」
-    # 這樣您可以直接在 TrueNAS 修改 default.conf (例如調整上傳限制)，不用重包映像檔
+    # 掛載本地設定檔，方便調整上傳限制等設定
     image: ghcr.io/yu320/dorm-chack-deployment-docker/nginx:latest
     restart: always
     ports:
       # [關鍵] 外部 8081 對應內部 80
-      # NPM (Nginx Proxy Manager) 請轉發到此 Port
       - "8081:80"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
@@ -39,9 +37,9 @@ services:
     image: mysql:8.0
     restart: always
     environment:
-      MYSQL_DATABASE: 'app_db'
-      MYSQL_USER: 'prod_user'
-      # [安全性] 引用 .env 變數，請勿直接寫死密碼
+      # [修正] 全部改用變數，對應 .env 檔案
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     volumes:
@@ -54,7 +52,8 @@ services:
     restart: always
     environment:
       PMA_HOST: db
-      PMA_USER: prod_user
+      # [修正] 改用變數
+      PMA_USER: ${DB_USER}
       PMA_PASSWORD: ${DB_PASSWORD}
       # 必須配合 nginx/default.conf 的設定
       PMA_ABSOLUTE_URI: /sys_db_admin_x9zp2/
