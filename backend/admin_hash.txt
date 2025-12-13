@@ -1,5 +1,0 @@
-完整哈希值:
-$pbkdf2-sha256$29000$lZLSOkcI4XwPYYzxfk8J4Q$7KfoZG2OaxvMdsQhHdH3femEjvF81RT9OzuaTaxCH5A
-
-SQL 更新語句:
-UPDATE users SET hashed_password = '$pbkdf2-sha256$29000$lZLSOkcI4XwPYYzxfk8J4Q$7KfoZG2OaxvMdsQhHdH3femEjvF81RT9OzuaTaxCH5A' WHERE username = 'admin';
