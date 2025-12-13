@@ -482,6 +482,25 @@ class PaginatedAuditLogs(BaseModel):
     total: int
     records: List[AuditLog]
 
+
+# --- System Settings Schemas ---
+class SystemSettingBase(BaseModel):
+    key: str
+    value: Optional[str] = None
+    description: Optional[str] = None
+
+class SystemSettingCreate(SystemSettingBase):
+    pass
+
+class SystemSettingUpdate(BaseModel):
+    value: Optional[str] = None
+    description: Optional[str] = None
+
+class SystemSetting(SystemSettingBase):
+    updated_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+
 # Rebuild models with forward references if any were used, e.g. in User
 # This is a good practice when schemas reference each other.
 User.model_rebuild()

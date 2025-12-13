@@ -18,6 +18,9 @@
         <button v-if="hasPermission('patrol_locations:view')" @click="activeTab = 'patrol_locations'" :class="[activeTab === 'patrol_locations' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300', 'whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm']">
           {{ $t('admin.patrolLocations') }}
         </button>
+        <button v-if="hasPermission('manage_system')" @click="activeTab = 'email'" :class="[activeTab === 'email' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300', 'whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm']">
+          {{ $t('admin.emailSettings') }}
+        </button>
       </nav>
 
       <!-- Roles Tab -->
@@ -85,6 +88,50 @@
             <button v-if="hasPermission('patrol_locations:manage')" @click.prevent="handlePatrolDelete(item.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">{{ $t('admin.delete') }}</button>
           </template>
         </DataTable>
+      </div>
+
+      <!-- Email Settings Tab -->
+      <div v-if="activeTab === 'email' && hasPermission('manage_system')">
+        <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-4">{{ $t('admin.emailSettings') }}</h2>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+          <form @submit.prevent="saveEmailSettings" class="space-y-6 max-w-2xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">SMTP Server</label>
+                <input type="text" v-model="emailSettings.mail_server" class="w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">SMTP Port</label>
+                <input type="number" v-model="emailSettings.mail_port" class="w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
+                <input type="text" v-model="emailSettings.mail_username" class="w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+                <input type="password" v-model="emailSettings.mail_password" class="w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sender Email (From)</label>
+                <input type="text" v-model="emailSettings.mail_from" class="w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+              </div>
+              <div class="flex items-center">
+                <input type="checkbox" v-model="emailSettings.mail_tls" id="mail_tls" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700">
+                <label for="mail_tls" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">Use TLS</label>
+              </div>
+              <div class="flex items-center">
+                <input type="checkbox" v-model="emailSettings.mail_ssl" id="mail_ssl" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700">
+                <label for="mail_ssl" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">Use SSL</label>
+              </div>
+            </div>
+            <div class="flex justify-end pt-4">
+               <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-150 ease-in-out">
+                 {{ $t('admin.saveSettings') }}
+               </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -196,6 +243,17 @@ const {
   getAll: getPatrols 
 } = useGenericCrud<PatrolLocation>('/api/v1/patrol-locations/');
 
+// State for Email Settings
+const emailSettings = ref({
+  mail_server: '',
+  mail_port: 587,
+  mail_username: '',
+  mail_password: '',
+  mail_from: '',
+  mail_tls: true,
+  mail_ssl: false
+});
+
 // Computed Columns
 const roleTableColumns = computed(() => [
   { key: 'name', label: t('admin.name') },
@@ -206,6 +264,45 @@ const patrolLocationTableColumns = computed(() => [
   { key: 'name', label: t('admin.name') },
   { key: 'household', label: t('admin.household') },
 ]);
+
+// --- Methods for Email Settings ---
+const fetchEmailSettings = async () => {
+  if (!hasPermission('manage_system')) return;
+  try {
+    const settingsList = await apiFetch('/api/v1/system-settings/');
+    if (Array.isArray(settingsList)) {
+      settingsList.forEach((setting: any) => {
+        const key = setting.key;
+        if (key in emailSettings.value) {
+           if (key === 'mail_tls' || key === 'mail_ssl') {
+                (emailSettings.value as any)[key] = setting.value === 'true';
+            } else {
+                (emailSettings.value as any)[key] = setting.value;
+            }
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Error fetching email settings:', error);
+    showSnackbar({ message: t('snackbar.failedToLoadData'), type: 'error' });
+  }
+};
+
+const saveEmailSettings = async () => {
+  try {
+    const promises = Object.entries(emailSettings.value).map(([key, value]) => {
+      return apiFetch(`/api/v1/system-settings/${key}`, {
+        method: 'PUT',
+        body: { value: String(value) }
+      });
+    });
+    await Promise.all(promises);
+    showSnackbar({ message: t('admin.saveSuccess'), type: 'success' });
+  } catch (error) {
+    showSnackbar({ message: t('admin.saveFailed'), type: 'error' });
+  }
+};
+
 
 // --- Methods for Roles ---
 const fetchRoles = async () => {
@@ -353,5 +450,6 @@ onMounted(() => {
   fetchRoles();
   fetchPermissions();
   fetchBuildings();
+  fetchEmailSettings();
 });
 </script>

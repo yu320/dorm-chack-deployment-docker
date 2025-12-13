@@ -5,7 +5,7 @@ from .endpoints import (
     buildings, beds, students, lights_out, patrol_locations,
     permissions, admin, admin_inspections, import_data, reports, notifications, backup,
 
-    dashboard, search, images, audit_logs,announcements # Add audit_logs
+    dashboard, search, images, audit_logs,announcements, system_settings # Add audit_logs, system_settings
 
 )
 
@@ -13,6 +13,7 @@ from .endpoints import (
 api_router = APIRouter()
 
 api_router.include_router(auth.router, tags=["auth"])
+api_router.include_router(system_settings.router, prefix="/system-settings", tags=["system-settings"])
 api_router.include_router(images.router, prefix="/images", tags=["images"]) # New images router
 api_router.include_router(announcements.router, prefix="/announcements", tags=["announcements"]) # New announcements router
 api_router.include_router(users.router, prefix="/users", tags=["users"])
