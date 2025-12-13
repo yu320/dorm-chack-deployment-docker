@@ -300,3 +300,13 @@ class Announcement(Base):
     created_by = Column(CHAR(36), ForeignKey("users.id"), nullable=False)
     
     creator = relationship("User")
+
+
+# --- System Settings Model ---
+class SystemSetting(Base):
+    __tablename__ = "system_settings"
+
+    key = Column(String(50), primary_key=True, index=True) # e.g., "mail_server", "mail_port"
+    value = Column(Text, nullable=True) # JSON encoded or raw string
+    description = Column(String(255), nullable=True)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

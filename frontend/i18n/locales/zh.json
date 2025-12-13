@@ -245,7 +245,11 @@
     "activeStatus": "啟用狀態",
     "roles": "角色",
     "settings": "設定",
-    "manageSettings": "管理角色、權限和巡邏地點。",
+    "emailSettings": "郵件伺服器設定",
+    "saveSettings": "儲存設定",
+    "saveSuccess": "設定儲存成功！",
+    "saveFailed": "設定儲存失敗。",
+    "manageSettings": "管理角色、權限、巡邏地點與系統設定。",
     "permissions": "權限",
     "patrolLocations": "巡邏地點",
     "createRole": "建立角色",
@@ -603,6 +607,86 @@
     "manage_items": {
       "title": "管理檢查項目",
       "description": "可以管理宿舍檢查項目"
+    },
+    "data:import": {
+      "title": "資料匯入",
+      "description": "可以匯入系統資料"
+    },
+    "system:settings": {
+      "title": "系統設定",
+      "description": "可以管理系統全域設定"
+    },
+    "patrol_locations:manage": {
+      "title": "管理巡邏地點",
+      "description": "可以建立、編輯與刪除巡邏地點"
+    },
+    "patrol_locations:view": {
+      "title": "查看巡邏地點",
+      "description": "可以查看巡邏地點列表"
+    },
+    "patrols:perform": {
+      "title": "執行巡視",
+      "description": "可以執行並提交巡視紀錄"
+    },
+    "patrols:view_all": {
+      "title": "查看所有巡視",
+      "description": "可以查看所有巡視紀錄"
+    },
+    "announcements:create": {
+      "title": "建立公告",
+      "description": "可以發布新公告"
+    },
+    "announcements:view": {
+      "title": "查看公告",
+      "description": "可以查看公告列表"
+    },
+    "announcements:edit": {
+      "title": "編輯公告",
+      "description": "可以編輯現有公告"
+    },
+    "announcements:delete": {
+      "title": "刪除公告",
+      "description": "可以刪除公告"
+    },
+    "inspections:submit_any": {
+      "title": "提交任意檢查",
+      "description": "可以為任何學生提交檢查紀錄"
+    },
+    "inspections:submit_own": {
+      "title": "提交個人檢查",
+      "description": "可以提交自己的檢查紀錄"
+    },
+    "inspections:view_own": {
+      "title": "查看個人檢查",
+      "description": "可以查看自己的檢查紀錄"
+    },
+    "inspections:view_all": {
+      "title": "查看所有檢查",
+      "description": "可以查看所有學生的檢查紀錄"
+    },
+    "inspections:delete": {
+      "title": "刪除檢查",
+      "description": "可以刪除檢查紀錄"
+    },
+    "inspections:reinspect": {
+      "title": "重新檢查",
+      "description": "可以將檢查狀態重置為待處理"
+    },
+    "students:view_own": {
+      "title": "查看個人資料",
+      "description": "可以查看自己的學生資料"
+    },
+    "students:view_all": {
+      "title": "查看所有學生",
+      "description": "可以查看所有學生的資料"
+    },
+    "reports:view_statistics": {
+      "title": "查看統計報告",
+      "description": "可以查看系統統計數據"
+    },
+    "reports:export": {
+      "title": "匯出報告",
+      "description": "可以匯出 PDF 或資料報告"
     }
   },
   "globalSearch": {

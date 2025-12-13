@@ -220,35 +220,11 @@
     "activeStatus": "Active",
     "roles": "Roles",
     "settings": "Settings",
-    "manageDorms": "Dorm Management",
-    "systemSettings": "System Settings",
-    "announcementsTitle": "Announcement Management",
-    "manageAnnouncementsDescription": "Manage system announcements.",
-    "searchAnnouncementsPlaceholder": "Search announcements...",
-    "createAnnouncement": "Create Announcement",
-    "createAnnouncementTitle": "Create Announcement",
-    "editAnnouncementTitle": "Edit Announcement",
-    "title": "Title",
-    "englishTitle": "English Title",
-    "tag": "Tag",
-    "tagPlaceholder": "Enter tag...",
-    "tagType": "Tag Type",
-    "tagTypePrimary": "Primary",
-    "tagTypeSuccess": "Success",
-    "tagTypeWarning": "Warning",
-    "tagTypeDanger": "Danger",
-    "tagTypeInfo": "Info",
-    "content": "Content",
-    "englishContent": "English Content",
-    "enableAnnouncement": "Enable Announcement",
-    "createdAt": "Created At",
-    "auditLogsTitle": "Audit Logs",
-    "auditLogsDescription": "View system operation logs to track user activity.",
-    "filterByAction": "Filter by action...",
-    "filterByResourceType": "Filter by resource type...",
-    "viewDetails": "View Details",
-    "logDetails": "Log Details",
-    "manageSettings": "Manage roles, permissions, and patrol locations.",
+    "emailSettings": "Email Server Settings",
+    "saveSettings": "Save Settings",
+    "saveSuccess": "Settings saved successfully!",
+    "saveFailed": "Failed to save settings.",
+    "manageSettings": "Manage roles, permissions, patrol locations and system settings.",
     "permissions": "Permissions",
     "patrolLocations": "Patrol Locations",
     "createRole": "Create Role",
@@ -653,8 +629,88 @@
       "description": "Can view all student inspection records"
     },
     "manage_items": {
-      "title": "Manage Items",
-      "description": "Can manage inspection items"
+      "title": "Manage Inspection Items",
+      "description": "Can manage dormitory inspection items"
+    },
+    "data:import": {
+      "title": "Data Import",
+      "description": "Can import system data"
+    },
+    "system:settings": {
+      "title": "System Settings",
+      "description": "Can manage global system settings"
+    },
+    "patrol_locations:manage": {
+      "title": "Manage Patrol Locations",
+      "description": "Can create, edit, and delete patrol locations"
+    },
+    "patrol_locations:view": {
+      "title": "View Patrol Locations",
+      "description": "Can view the list of patrol locations"
+    },
+    "patrols:perform": {
+      "title": "Perform Patrol",
+      "description": "Can perform and submit patrol records"
+    },
+    "patrols:view_all": {
+      "title": "View All Patrols",
+      "description": "Can view all patrol records"
+    },
+    "announcements:create": {
+      "title": "Create Announcement",
+      "description": "Can publish new announcements"
+    },
+    "announcements:view": {
+      "title": "View Announcements",
+      "description": "Can view the list of announcements"
+    },
+    "announcements:edit": {
+      "title": "Edit Announcement",
+      "description": "Can edit existing announcements"
+    },
+    "announcements:delete": {
+      "title": "Delete Announcement",
+      "description": "Can delete announcements"
+    },
+    "inspections:submit_any": {
+      "title": "Submit Any Inspection",
+      "description": "Can submit inspection records for any student"
+    },
+    "inspections:submit_own": {
+      "title": "Submit Own Inspection",
+      "description": "Can submit own inspection records"
+    },
+    "inspections:view_own": {
+      "title": "View Own Inspection",
+      "description": "Can view own inspection records"
+    },
+    "inspections:view_all": {
+      "title": "View All Inspections",
+      "description": "Can view inspection records for all students"
+    },
+    "inspections:delete": {
+      "title": "Delete Inspection",
+      "description": "Can delete inspection records"
+    },
+    "inspections:reinspect": {
+      "title": "Re-inspect",
+      "description": "Can reset inspection status to pending"
+    },
+    "students:view_own": {
+      "title": "View Own Profile",
+      "description": "Can view own student profile"
+    },
+    "students:view_all": {
+      "title": "View All Students",
+      "description": "Can view all student profiles"
+    },
+    "reports:view_statistics": {
+      "title": "View Statistics",
+      "description": "Can view system statistical data"
+    },
+    "reports:export": {
+      "title": "Export Reports",
+      "description": "Can export PDF or data reports"
     }
   },
   "globalSearch": {

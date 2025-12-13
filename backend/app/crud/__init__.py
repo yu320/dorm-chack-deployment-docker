@@ -12,6 +12,7 @@ from .crud_backup import backup_crud as crud_backup
 from .crud_permission import permission_crud as crud_permission
 from .crud_role import role_crud as crud_role
 from .crud_item import item_crud as crud_item
+from .crud_system_setting import crud_system_setting
 
 # Export instances for easy access
 __all__ = [
@@ -28,5 +29,6 @@ __all__ = [
     "crud_backup",
     "crud_permission",
     "crud_role",
-    "crud_item"
+    "crud_item",
+    "crud_system_setting"
 ]
