@@ -23,6 +23,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 # Copy the application source code
 COPY . .
+COPY alembic.ini  .
 
 # Expose the port
 EXPOSE 8000
