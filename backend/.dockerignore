@@ -5,7 +5,6 @@ __pycache__
 *.pyc
 *.db
 .env
-alembic.ini
 test.db
 test_output.txt
 test_output_utf8.txt
