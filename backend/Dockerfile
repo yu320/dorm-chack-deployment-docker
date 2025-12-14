@@ -28,4 +28,4 @@ COPY . .
 EXPOSE 8000
 
 # Ensure alembic migration runs before app starts
-CMD alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000
+CD alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000
